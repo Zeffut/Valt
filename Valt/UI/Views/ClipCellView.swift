@@ -4,14 +4,14 @@ import AppKit
 
 struct ClipCellView: View {
     let item: ClipItem
+    let isSelected: Bool
     let onPaste: () -> Void
     let onCopy: () -> Void
-    let onPin: (() -> Void)?
 
     @State private var isHovered = false
 
-    private let cellWidth: CGFloat = 160
-    private let cellHeight: CGFloat = 160
+    private let cellWidth: CGFloat = 220
+    private let cellHeight: CGFloat = 215
 
     var body: some View {
         VStack(spacing: 0) {
@@ -32,22 +32,26 @@ struct ClipCellView: View {
             .background(.ultraThinMaterial)
         }
         .frame(width: cellWidth, height: cellHeight)
-        .background(isHovered ? Color.accentColor.opacity(0.15) : Color.clear)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(isHovered ? Color.accentColor : Color.white.opacity(0.1), lineWidth: 1)
+        .background(
+            isSelected
+                ? Color.accentColor.opacity(0.25)
+                : (isHovered ? Color.white.opacity(0.08) : Color.clear)
         )
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(
+                    isSelected ? Color.accentColor : Color.white.opacity(0.12),
+                    lineWidth: isSelected ? 2 : 1
+                )
+        )
+        .shadow(color: isSelected ? Color.accentColor.opacity(0.3) : .clear, radius: 6)
         .onHover { isHovered = $0 }
         .onTapGesture(count: 2) { onCopy() }
         .onTapGesture(count: 1) { onPaste() }
         .contextMenu {
-            Button("Copier") { onCopy() }
             Button("Coller") { onPaste() }
-            if let onPin {
-                Divider()
-                Button("Épingler") { onPin() }
-            }
+            Button("Copier") { onCopy() }
         }
     }
 

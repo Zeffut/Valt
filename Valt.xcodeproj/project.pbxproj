@@ -12,6 +12,7 @@
 		199B97ED178EEEB541BBA0AE /* ShelfView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBE35DDA6AD522411F57CF1 /* ShelfView.swift */; };
 		210F6B4B50A1F10520CF1EA9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F097DB8FCC6F2537519EB7F /* SettingsView.swift */; };
 		227D85FF2E97243CC5455AF4 /* ClipCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BBD35AAE9B924C6FDBCE3D5 /* ClipCellView.swift */; };
+		45CF3419623198429E338723 /* SelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7ED8F5D1919E0F86BA99F11 /* SelectionModel.swift */; };
 		56A3BABA62472EF1E9A3DE11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202FB15358F94EB6BFB06879 /* AppDelegate.swift */; };
 		6189673069F20C5CBB07F038 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07B62173750BD146E189EDCF /* HotkeyManager.swift */; };
 		67527B1CAF994152A4431A7C /* ValtApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E116FCA721E25683D82D354 /* ValtApp.swift */; };
@@ -20,7 +21,6 @@
 		93389CB9ECEF915311788C9A /* PasteboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979EA9A51426C85A8ADA0FBD /* PasteboardService.swift */; };
 		96A23AE1CE4BF4DCAC5978E4 /* Pinboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3315150CD802AA1444C2C1 /* Pinboard.swift */; };
 		AF1ADA66504442DDB1070CEE /* ClipboardMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BBC2B45427A676880E1F73 /* ClipboardMonitor.swift */; };
-		D9C30A271EA4C39F0F2C5622 /* PinboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70DA93503F19CFC9C2DCACEB /* PinboardView.swift */; };
 		DAB5498BAE6A07C6848B03A8 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3218971D591177E0D03FC7A3 /* SearchBarView.swift */; };
 		DF995EEC7BE8E006E9AE3014 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9435B407A4F83C0C1196C3D8 /* SearchService.swift */; };
 		F6B5450F716774640B5E19BF /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 700BDA5318C2E03FFAC9F48D /* ClipItem.swift */; };
@@ -38,7 +38,6 @@
 		3218971D591177E0D03FC7A3 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		6DA25E829C0A85FAD9E7217C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		700BDA5318C2E03FFAC9F48D /* ClipItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItem.swift; sourceTree = "<group>"; };
-		70DA93503F19CFC9C2DCACEB /* PinboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinboardView.swift; sourceTree = "<group>"; };
 		7BBD35AAE9B924C6FDBCE3D5 /* ClipCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipCellView.swift; sourceTree = "<group>"; };
 		8C1CB7DAAA8E218B0E782C51 /* PanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelController.swift; sourceTree = "<group>"; };
 		8E116FCA721E25683D82D354 /* ValtApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValtApp.swift; sourceTree = "<group>"; };
@@ -47,6 +46,7 @@
 		979EA9A51426C85A8ADA0FBD /* PasteboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardService.swift; sourceTree = "<group>"; };
 		9C98EE8A1526C776E9AFE8B6 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		B4BBC2B45427A676880E1F73 /* ClipboardMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardMonitor.swift; sourceTree = "<group>"; };
+		B7ED8F5D1919E0F86BA99F11 /* SelectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionModel.swift; sourceTree = "<group>"; };
 		CB5FD9B8E1886170E237923E /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		D6D78447784CFE329780ADAC /* PastePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastePanel.swift; sourceTree = "<group>"; };
 		E23B4AD13A8A769B25D3982B /* Valt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Valt.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -132,9 +132,9 @@
 			children = (
 				7BBD35AAE9B924C6FDBCE3D5 /* ClipCellView.swift */,
 				CB5FD9B8E1886170E237923E /* HistoryView.swift */,
-				70DA93503F19CFC9C2DCACEB /* PinboardView.swift */,
 				9C98EE8A1526C776E9AFE8B6 /* PreviewView.swift */,
 				3218971D591177E0D03FC7A3 /* SearchBarView.swift */,
+				B7ED8F5D1919E0F86BA99F11 /* SelectionModel.swift */,
 				2F097DB8FCC6F2537519EB7F /* SettingsView.swift */,
 				2CBE35DDA6AD522411F57CF1 /* ShelfView.swift */,
 			);
@@ -218,10 +218,10 @@
 				93389CB9ECEF915311788C9A /* PasteboardService.swift in Sources */,
 				F6DBE6A0B43DB4024B493641 /* PersistenceController.swift in Sources */,
 				96A23AE1CE4BF4DCAC5978E4 /* Pinboard.swift in Sources */,
-				D9C30A271EA4C39F0F2C5622 /* PinboardView.swift in Sources */,
 				FA725A14E6F330F89D452446 /* PreviewView.swift in Sources */,
 				DAB5498BAE6A07C6848B03A8 /* SearchBarView.swift in Sources */,
 				DF995EEC7BE8E006E9AE3014 /* SearchService.swift in Sources */,
+				45CF3419623198429E338723 /* SelectionModel.swift in Sources */,
 				210F6B4B50A1F10520CF1EA9 /* SettingsView.swift in Sources */,
 				199B97ED178EEEB541BBA0AE /* ShelfView.swift in Sources */,
 				67527B1CAF994152A4431A7C /* ValtApp.swift in Sources */,

@@ -4,6 +4,7 @@ import CoreData
 
 struct ShelfView: View {
     let persistence: PersistenceController
+    let selection: SelectionModel
     let onPaste: (ClipItem) -> Void
     let onCopy: (ClipItem) -> Void
     let onDismiss: () -> Void
@@ -18,19 +19,15 @@ struct ShelfView: View {
     )
     private var historyItems: FetchedResults<ClipItem>
 
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Pinboard.position, ascending: true)],
-        animation: .default
-    )
-    private var pinboards: FetchedResults<Pinboard>
-
     init(
         persistence: PersistenceController,
+        selection: SelectionModel,
         onPaste: @escaping (ClipItem) -> Void,
         onCopy: @escaping (ClipItem) -> Void,
         onDismiss: @escaping () -> Void
     ) {
         self.persistence = persistence
+        self.selection = selection
         self.onPaste = onPaste
         self.onCopy = onCopy
         self.onDismiss = onDismiss
@@ -48,6 +45,7 @@ struct ShelfView: View {
                 SearchBarView(query: $searchQuery)
                     .onChange(of: searchQuery) { _, new in
                         searchService.search(new)
+                        selection.reset()
                     }
                 Spacer()
                 Button {
@@ -66,36 +64,22 @@ struct ShelfView: View {
 
             Divider()
 
-            // Contenu 2 colonnes
-            HStack(spacing: 0) {
-                HistoryView(
-                    items: displayedItems,
-                    onPaste: onPaste,
-                    onCopy: onCopy,
-                    onPin: { item in pinItem(item) }
-                )
-                .frame(maxWidth: .infinity)
-
-                Divider()
-
-                PinboardView(
-                    pinboards: Array(pinboards),
-                    onPaste: onPaste,
-                    onCopy: onCopy,
-                    context: persistence.context
-                )
-                .frame(maxWidth: .infinity)
-            }
+            HistoryView(
+                items: displayedItems,
+                selection: selection,
+                onPaste: onPaste,
+                onCopy: onCopy
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        // Entrée → colle l'item sélectionné (déclenché par PanelController via pasteTrigger)
+        .onChange(of: selection.pasteTrigger) { _, _ in
+            guard selection.selectedIndex < displayedItems.count else { return }
+            onPaste(displayedItems[selection.selectedIndex])
         }
         .onKeyPress(.escape) {
             onDismiss()
             return .handled
         }
-    }
-
-    private func pinItem(_ item: ClipItem) {
-        guard let firstPinboard = pinboards.first else { return }
-        item.pinboard = firstPinboard
-        persistence.save()
     }
 }
