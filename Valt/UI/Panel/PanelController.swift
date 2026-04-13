@@ -31,6 +31,7 @@ final class PanelController {
     func hide() {
         panel?.orderOut(nil)
         stopKeyMonitor()
+        selection.reset()
     }
 
     // MARK: - Keyboard navigation

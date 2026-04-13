@@ -20,6 +20,7 @@
 		827F8C082F4FF5A6B9C066BA /* ValtDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F52C86C435069A7107DF82 /* ValtDataModel.swift */; };
 		93389CB9ECEF915311788C9A /* PasteboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979EA9A51426C85A8ADA0FBD /* PasteboardService.swift */; };
 		96A23AE1CE4BF4DCAC5978E4 /* Pinboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3315150CD802AA1444C2C1 /* Pinboard.swift */; };
+		99B9FA0F2142C8C2C54320F8 /* URLMetadataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDEF26BAD5D6220E902F335 /* URLMetadataStore.swift */; };
 		AF1ADA66504442DDB1070CEE /* ClipboardMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BBC2B45427A676880E1F73 /* ClipboardMonitor.swift */; };
 		DAB5498BAE6A07C6848B03A8 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3218971D591177E0D03FC7A3 /* SearchBarView.swift */; };
 		DF995EEC7BE8E006E9AE3014 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9435B407A4F83C0C1196C3D8 /* SearchService.swift */; };
@@ -36,6 +37,7 @@
 		2CBE35DDA6AD522411F57CF1 /* ShelfView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfView.swift; sourceTree = "<group>"; };
 		2F097DB8FCC6F2537519EB7F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		3218971D591177E0D03FC7A3 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
+		3DDEF26BAD5D6220E902F335 /* URLMetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLMetadataStore.swift; sourceTree = "<group>"; };
 		6DA25E829C0A85FAD9E7217C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		700BDA5318C2E03FFAC9F48D /* ClipItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItem.swift; sourceTree = "<group>"; };
 		7BBD35AAE9B924C6FDBCE3D5 /* ClipCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipCellView.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				07B62173750BD146E189EDCF /* HotkeyManager.swift */,
 				979EA9A51426C85A8ADA0FBD /* PasteboardService.swift */,
 				9435B407A4F83C0C1196C3D8 /* SearchService.swift */,
+				3DDEF26BAD5D6220E902F335 /* URLMetadataStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -224,6 +227,7 @@
 				45CF3419623198429E338723 /* SelectionModel.swift in Sources */,
 				210F6B4B50A1F10520CF1EA9 /* SettingsView.swift in Sources */,
 				199B97ED178EEEB541BBA0AE /* ShelfView.swift in Sources */,
+				99B9FA0F2142C8C2C54320F8 /* URLMetadataStore.swift in Sources */,
 				67527B1CAF994152A4431A7C /* ValtApp.swift in Sources */,
 				827F8C082F4FF5A6B9C066BA /* ValtDataModel.swift in Sources */,
 			);
