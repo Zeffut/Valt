@@ -1,35 +1,73 @@
 // Valt/Services/HotkeyManager.swift
 import AppKit
+import CoreGraphics
 
-/// Détecte ⌘⇧V globalement via NSEvent monitors.
-/// Nécessite la permission d'accessibilité (demandée depuis AppDelegate).
+// C-compatible callback — free function pour pouvoir être passée comme pointeur C
+private func eventTapCallback(
+    proxy: CGEventTapProxy,
+    type: CGEventType,
+    event: CGEvent,
+    refcon: UnsafeMutableRawPointer?
+) -> Unmanaged<CGEvent>? {
+    guard type == .keyDown, let refcon else {
+        return Unmanaged.passUnretained(event)
+    }
+
+    let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+    let flags = event.flags
+
+    // ⌘⇧V : keyCode 9, command + shift
+    guard keyCode == 9,
+          flags.contains(.maskCommand),
+          flags.contains(.maskShift) else {
+        return Unmanaged.passUnretained(event)
+    }
+
+    let manager = Unmanaged<HotkeyManager>.fromOpaque(refcon).takeUnretainedValue()
+    DispatchQueue.main.async { manager.onToggle?() }
+
+    return nil // Consomme l'event — ne le transmet pas à l'app active
+}
+
 @MainActor
 final class HotkeyManager {
     var onToggle: (() -> Void)?
 
-    private var globalMonitor: Any?
-    private var localMonitor: Any?
+    private var eventTap: CFMachPort?
+    private var runLoopSource: CFRunLoopSource?
 
     func start() {
-        globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            self?.handle(event)
+        let mask = CGEventMask(1 << CGEventType.keyDown.rawValue)
+        let selfPtr = Unmanaged.passUnretained(self).toOpaque()
+
+        guard let tap = CGEvent.tapCreate(
+            tap: .cgSessionEventTap,
+            place: .headInsertEventTap,
+            options: .defaultTap,
+            eventsOfInterest: mask,
+            callback: eventTapCallback,
+            userInfo: selfPtr
+        ) else {
+            print("HotkeyManager: CGEventTap failed — vérifier la permission d'accessibilité")
+            return
         }
-        localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            self?.handle(event)
-            return event
-        }
+
+        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
+        CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
+        CGEvent.tapEnable(tap: tap, enable: true)
+
+        eventTap = tap
+        runLoopSource = source
     }
 
     func stop() {
-        [globalMonitor, localMonitor].compactMap { $0 }.forEach(NSEvent.removeMonitor)
-        globalMonitor = nil
-        localMonitor = nil
-    }
-
-    private func handle(_ event: NSEvent) {
-        guard event.keyCode == 9,                          // V key
-              event.modifierFlags.contains(.command),
-              event.modifierFlags.contains(.shift) else { return }
-        Task { @MainActor [weak self] in self?.onToggle?() }
+        if let tap = eventTap {
+            CGEvent.tapEnable(tap: tap, enable: false)
+        }
+        if let source = runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
+        }
+        eventTap = nil
+        runLoopSource = nil
     }
 }
