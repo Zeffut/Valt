@@ -31,13 +31,22 @@ final class PanelController {
     private func buildPanel() {
         let p = PastePanel()
 
-        // Placeholder — sera remplacé par ShelfView dans Task 11
-        let placeholder = Text("Valt — en construction")
-            .font(.largeTitle)
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        let root = ShelfView(
+            persistence: persistence,
+            onPaste: { [weak self] item in
+                self?.hide()
+                self?.pasteService.paste(item)
+            },
+            onCopy: { item in
+                PasteboardService.shared.copy(item)
+            },
+            onDismiss: { [weak self] in
+                self?.hide()
+            }
+        )
+        .environment(\.managedObjectContext, persistence.context)
 
-        let host = NSHostingView(rootView: placeholder)
+        let host = NSHostingView(rootView: root)
         host.frame = p.contentView!.bounds
         host.autoresizingMask = [.width, .height]
         p.contentView!.addSubview(host)
