@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		827F8C082F4FF5A6B9C066BA /* ValtDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F52C86C435069A7107DF82 /* ValtDataModel.swift */; };
+		96A23AE1CE4BF4DCAC5978E4 /* Pinboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3315150CD802AA1444C2C1 /* Pinboard.swift */; };
+		F6B5450F716774640B5E19BF /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 700BDA5318C2E03FFAC9F48D /* ClipItem.swift */; };
+		F6DBE6A0B43DB4024B493641 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9227C4B2AE15ECB36DB3C1D4 /* PersistenceController.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		19F52C86C435069A7107DF82 /* ValtDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValtDataModel.swift; sourceTree = "<group>"; };
+		2B3315150CD802AA1444C2C1 /* Pinboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pinboard.swift; sourceTree = "<group>"; };
 		6DA25E829C0A85FAD9E7217C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		700BDA5318C2E03FFAC9F48D /* ClipItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipItem.swift; sourceTree = "<group>"; };
+		9227C4B2AE15ECB36DB3C1D4 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		E23B4AD13A8A769B25D3982B /* Valt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Valt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -39,6 +50,10 @@
 		611A2314A3B2388B776760B2 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				700BDA5318C2E03FFAC9F48D /* ClipItem.swift */,
+				9227C4B2AE15ECB36DB3C1D4 /* PersistenceController.swift */,
+				2B3315150CD802AA1444C2C1 /* Pinboard.swift */,
+				19F52C86C435069A7107DF82 /* ValtDataModel.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -147,6 +162,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6B5450F716774640B5E19BF /* ClipItem.swift in Sources */,
+				F6DBE6A0B43DB4024B493641 /* PersistenceController.swift in Sources */,
+				96A23AE1CE4BF4DCAC5978E4 /* Pinboard.swift in Sources */,
+				827F8C082F4FF5A6B9C066BA /* ValtDataModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
