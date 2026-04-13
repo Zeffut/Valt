@@ -1,0 +1,34 @@
+name: Valt
+options:
+  bundleIdPrefix: com.valt
+  deploymentTarget:
+    macOS: "15.0"
+  generateEmptyDirectories: true
+  defaultConfig: Debug
+
+configs:
+  Debug: debug
+  Release: release
+
+targets:
+  Valt:
+    type: application
+    platform: macOS
+    sources:
+      - path: Valt
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.valt.app
+        PRODUCT_NAME: Valt
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        MACOSX_DEPLOYMENT_TARGET: "15.0"
+        CODE_SIGNING_REQUIRED: "NO"
+        CODE_SIGN_IDENTITY: ""
+        CODE_SIGNING_ALLOWED: "NO"
+        ENABLE_HARDENED_RUNTIME: "NO"
+        INFOPLIST_FILE: Valt/Resources/Info.plist
+        SWIFT_STRICT_CONCURRENCY: targeted
