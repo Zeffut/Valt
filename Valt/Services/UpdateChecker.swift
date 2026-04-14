@@ -7,12 +7,11 @@ final class UpdateChecker {
     static let shared = UpdateChecker()
 
     private static let apiURL = URL(string: "https://api.github.com/repos/Zeffut/Valt/releases/latest")!
-    private static let checkIntervalSeconds: TimeInterval = 24 * 3600  // 1 fois par jour max
+    private static let checkIntervalSeconds: TimeInterval = 24 * 3600
     private static let lastCheckKey = "valt.updateLastCheck"
 
     private init() {}
 
-    /// Vérifie silencieusement au lancement (respecte l'intervalle quotidien).
     func checkOnLaunch() {
         let last = UserDefaults.standard.double(forKey: Self.lastCheckKey)
         let elapsed = Date().timeIntervalSince1970 - last
@@ -20,7 +19,6 @@ final class UpdateChecker {
         Task { await check(silent: true) }
     }
 
-    /// Vérification manuelle (depuis le menu ou les préférences).
     func checkNow() {
         Task { await check(silent: false) }
     }
@@ -51,7 +49,7 @@ final class UpdateChecker {
         }
     }
 
-    // MARK: - Comparaison de versions (SemVer)
+    // MARK: - Comparaison SemVer
 
     private func isNewer(_ remote: String, than current: String) -> Bool {
         let r = remote.split(separator: ".").compactMap { Int($0) }
@@ -69,17 +67,22 @@ final class UpdateChecker {
     private func showUpdateAlert(version: String, release: GitHubRelease) {
         let current = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
         let alert = NSAlert()
-        alert.messageText = "Mise à jour disponible"
-        alert.informativeText = "Valt \(version) est disponible (version actuelle : \(current))."
-        alert.addButton(withTitle: "Télécharger")
+        alert.messageText = "Mise à jour disponible — Valt \(version)"
+        alert.informativeText = "Version actuelle : \(current)\n\nValt va télécharger et installer la mise à jour automatiquement, puis se relancer."
+        alert.addButton(withTitle: "Installer maintenant")
         alert.addButton(withTitle: "Plus tard")
         alert.alertStyle = .informational
 
         NSApp.activate(ignoringOtherApps: true)
-        if alert.runModal() == .alertFirstButtonReturn {
-            if let url = URL(string: release.htmlURL) {
-                NSWorkspace.shared.open(url)
-            }
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+
+        // Chercher l'asset .dmg dans la release
+        if let asset = release.assets.first(where: { $0.name.hasSuffix(".dmg") }),
+           let downloadURL = URL(string: asset.browserDownloadURL) {
+            UpdateInstaller.shared.install(from: downloadURL)
+        } else if let fallbackURL = URL(string: release.htmlURL) {
+            // Pas de DMG dans les assets → ouvrir la page de release
+            NSWorkspace.shared.open(fallbackURL)
         }
     }
 
@@ -104,14 +107,26 @@ final class UpdateChecker {
     }
 }
 
-// MARK: - Modèle GitHub API
+// MARK: - Modèles GitHub API
 
 private struct GitHubRelease: Decodable {
     let tagName: String
     let htmlURL: String
+    let assets: [Asset]
+
+    struct Asset: Decodable {
+        let name: String
+        let browserDownloadURL: String
+
+        enum CodingKeys: String, CodingKey {
+            case name
+            case browserDownloadURL = "browser_download_url"
+        }
+    }
 
     enum CodingKeys: String, CodingKey {
         case tagName = "tag_name"
         case htmlURL = "html_url"
+        case assets
     }
 }
