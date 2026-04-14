@@ -22,5 +22,5 @@ xcuserdata/
 .Spotlight-V100
 .Trashes
 
-# Docs internes
-docs/superpowers/
+# Docs internes (plans de travail, pas les specs finales)
+docs/superpowers/plans/
