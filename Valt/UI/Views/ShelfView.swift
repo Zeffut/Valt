@@ -49,7 +49,11 @@ struct ShelfView: View {
                     }
                 Spacer()
                 Button {
-                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                    onDismiss()
+                    // Délai d'un tick pour laisser le panel se fermer avant d'activer l'app
+                    DispatchQueue.main.async {
+                        (NSApp.delegate as? AppDelegate)?.openSettings()
+                    }
                 } label: {
                     Image(systemName: "gear")
                         .font(.system(size: 15))

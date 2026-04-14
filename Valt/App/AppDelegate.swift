@@ -1,5 +1,6 @@
 // Valt/App/AppDelegate.swift
 @preconcurrency import AppKit
+import SwiftUI
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -8,6 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let monitor: ClipboardMonitor
     private let hotkeyManager = HotkeyManager()
     private var panelController: PanelController!
+    private var settingsWindow: NSWindow?
 
     override init() {
         monitor = ClipboardMonitor(persistence: PersistenceController.shared)
@@ -81,8 +83,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func openPanel() { panelController.show() }
 
-    @objc private func openSettings() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+    @objc func openSettings() {
+        if settingsWindow == nil {
+            let win = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 380, height: 280),
+                styleMask: [.titled, .closable, .miniaturizable],
+                backing: .buffered,
+                defer: false
+            )
+            win.title = "Préférences Valt"
+            win.center()
+            win.isReleasedWhenClosed = false
+            win.contentView = NSHostingView(rootView: SettingsView())
+            settingsWindow = win
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        settingsWindow?.makeKeyAndOrderFront(nil)
     }
 
     @objc private func quit() { NSApp.terminate(nil) }

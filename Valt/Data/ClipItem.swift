@@ -44,13 +44,24 @@ final class ClipItem: NSManagedObject {
         return try? context.fetch(req).first
     }
 
-    /// Supprime les anciens clips hors pinboard au-delà de `limit`.
+    /// Supprime les clips hors pinboard au-delà de `limit` et/ou plus vieux que `days` jours.
     /// N'appelle PAS save() — c'est à l'appelant de le faire.
-    static func purgeOldItems(keeping limit: Int, in context: NSManagedObjectContext) {
+    static func purgeOldItems(keeping limit: Int, olderThan days: Int = 0, in context: NSManagedObjectContext) {
         let req = fetchRequest()
         req.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
         req.predicate = NSPredicate(format: "pinboard == nil")
-        guard let items = try? context.fetch(req), items.count > limit else { return }
-        items.dropFirst(limit).forEach { context.delete($0) }
+        guard let items = try? context.fetch(req) else { return }
+
+        // Suppression par ancienneté
+        if days > 0 {
+            let cutoff = Date().addingTimeInterval(-Double(days) * 86_400)
+            items.filter { $0.createdAt < cutoff }.forEach { context.delete($0) }
+        }
+
+        // Suppression par nombre (sur ce qui reste après la purge par date)
+        let remaining = items.filter { !context.deletedObjects.contains($0) }
+        if remaining.count > limit {
+            remaining.dropFirst(limit).forEach { context.delete($0) }
+        }
     }
 }

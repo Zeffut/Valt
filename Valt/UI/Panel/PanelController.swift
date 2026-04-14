@@ -10,6 +10,7 @@ final class PanelController {
     private let monitor: ClipboardMonitor
     private let selection = SelectionModel()
     private var keyMonitor: Any?
+    private var resignObserver: Any?
 
     init(persistence: PersistenceController, pasteService: PasteboardService, monitor: ClipboardMonitor) {
         self.persistence = persistence
@@ -23,29 +24,44 @@ final class PanelController {
 
     func show() {
         pasteService.recordActiveApp()
-        if panel == nil { buildPanel() }
-        // Montrer le panel EN PREMIER — SwiftUI reprend l'observation avant qu'on change resetToken
+        // Reconstruire à chaque ouverture pour garantir un rendu SwiftUI frais.
+        // Le panel réutilisé peut afficher du contenu périmé si SwiftUI a raté
+        // une mise à jour pendant que la fenêtre était cachée.
+        tearDownPanel()
+        buildPanel()
+        NSApp.activate(ignoringOtherApps: true)
         panel?.orderFrontRegardless()
         panel?.makeKey()
         startKeyMonitor()
         monitor.setFastPolling(true)
-        // Déférer le reset d'un tick pour que SwiftUI soit bien actif quand resetToken change
-        Task { @MainActor in
-            selection.reset()
-        }
+        selection.reset()
     }
 
     func hide() {
-        panel?.orderOut(nil)
+        tearDownPanel()
         stopKeyMonitor()
         selection.reset()
         monitor.setFastPolling(false)
+    }
+
+    // MARK: - Nettoyage
+
+    private func tearDownPanel() {
+        if let obs = resignObserver {
+            NotificationCenter.default.removeObserver(obs)
+            resignObserver = nil
+        }
+        panel?.orderOut(nil)
+        panel = nil
     }
 
     // MARK: - Keyboard navigation
 
     private func startKeyMonitor() {
         guard keyMonitor == nil else { return }
+        // Moniteur LOCAL : reçoit les touches destinées à notre app (quand elle est active).
+        // NSApp.activate() dans show() garantit que l'app est active avant l'enregistrement.
+        // Retourne nil pour consommer la touche (empêche le scroll de la ScrollView).
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self else { return event }
             switch event.keyCode {
@@ -58,8 +74,8 @@ final class PanelController {
     }
 
     private func stopKeyMonitor() {
-        if let monitor = keyMonitor {
-            NSEvent.removeMonitor(monitor)
+        if let m = keyMonitor {
+            NSEvent.removeMonitor(m)
             keyMonitor = nil
         }
     }
@@ -90,7 +106,7 @@ final class PanelController {
         host.autoresizingMask = [.width, .height]
         p.contentView!.addSubview(host)
 
-        NotificationCenter.default.addObserver(
+        resignObserver = NotificationCenter.default.addObserver(
             forName: NSWindow.didResignKeyNotification,
             object: p,
             queue: .main

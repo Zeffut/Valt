@@ -6,8 +6,10 @@ import CoreData
 final class ClipboardMonitor {
     private var timer: Timer?
     private var lastChangeCount: Int
-    private let maxItems = 500
     private let persistence: PersistenceController
+
+    private var maxItems: Int { let v = UserDefaults.standard.integer(forKey: "valt.maxItems"); return v > 0 ? v : 500 }
+    private var maxDays: Int  { UserDefaults.standard.integer(forKey: "valt.maxDays") }
     private var fastPolling = false
 
     init(persistence: PersistenceController = .shared) {
@@ -82,7 +84,7 @@ final class ClipboardMonitor {
         }
 
         // Un seul save — purgeOldItems ne save plus lui-même
-        ClipItem.purgeOldItems(keeping: maxItems, in: context)
+        ClipItem.purgeOldItems(keeping: maxItems, olderThan: maxDays, in: context)
         persistence.save()
     }
 

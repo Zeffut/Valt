@@ -1,6 +1,7 @@
 // Valt/Services/URLMetadataStore.swift
 import AppKit
 import Observation
+import CryptoKit
 
 @Observable
 @MainActor
@@ -20,6 +21,14 @@ final class URLMetadataStore {
     private static let udKey = "valt.urlCache"
     private static let maxHTMLBytes = 512 * 1024
 
+    // Dossier ~/Library/Caches/com.valt.app/urlImages/
+    private static let imagesCacheDir: URL = {
+        let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let dir = base.appendingPathComponent("com.valt.app/urlImages", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }()
+
     private init() { loadPersistedCache() }
 
     func metadata(for urlString: String) -> Metadata? { cache[urlString] }
@@ -32,28 +41,59 @@ final class URLMetadataStore {
             let meta = await Self.fetch(url: url, urlString: urlString)
             self.cache[urlString] = meta
             self.fetching.remove(urlString)
-            self.persistCache()
+            self.persistCache(urlString: urlString, meta: meta)
         }
     }
 
-    // MARK: - Persistance
+    // MARK: - Persistance texte (UserDefaults) + images (fichiers)
 
     private func loadPersistedCache() {
         guard let dict = UserDefaults.standard.dictionary(forKey: Self.udKey) as? [String: [String: String]] else { return }
         for (urlString, entry) in dict {
             guard let domain = entry["domain"] else { continue }
-            cache[urlString] = Metadata(title: entry["title"], domain: domain)
+            var meta = Metadata(title: entry["title"], domain: domain)
+            let key = Self.cacheKey(for: urlString)
+            meta.faviconImage = Self.loadImage(name: "\(key)_favicon")
+            meta.ogImage      = Self.loadImage(name: "\(key)_og")
+            cache[urlString] = meta
         }
     }
 
-    private func persistCache() {
-        var dict: [String: [String: String]] = [:]
-        for (urlString, meta) in cache {
-            var entry: [String: String] = ["domain": meta.domain]
-            if let title = meta.title { entry["title"] = title }
-            dict[urlString] = entry
-        }
+    private func persistCache(urlString: String, meta: Metadata) {
+        // Texte → UserDefaults
+        var dict = (UserDefaults.standard.dictionary(forKey: Self.udKey) as? [String: [String: String]]) ?? [:]
+        var entry: [String: String] = ["domain": meta.domain]
+        if let title = meta.title { entry["title"] = title }
+        dict[urlString] = entry
         UserDefaults.standard.set(dict, forKey: Self.udKey)
+
+        // Images → fichiers PNG
+        let key = Self.cacheKey(for: urlString)
+        if let img = meta.faviconImage { Self.saveImage(img, name: "\(key)_favicon") }
+        if let img = meta.ogImage      { Self.saveImage(img, name: "\(key)_og") }
+    }
+
+    // MARK: - Image I/O
+
+    private static func cacheKey(for urlString: String) -> String {
+        let data = Data(urlString.utf8)
+        let hash = SHA256.hash(data: data)
+        return hash.prefix(16).map { String(format: "%02x", $0) }.joined()
+    }
+
+    private static func saveImage(_ image: NSImage, name: String) {
+        guard let tiff = image.tiffRepresentation,
+              let bitmap = NSBitmapImageRep(data: tiff),
+              let png = bitmap.representation(using: .png, properties: [:]) else { return }
+        let url = imagesCacheDir.appendingPathComponent("\(name).png")
+        try? png.write(to: url, options: .atomic)
+    }
+
+    private static func loadImage(name: String) -> NSImage? {
+        let url = imagesCacheDir.appendingPathComponent("\(name).png")
+        guard FileManager.default.fileExists(atPath: url.path),
+              let img = NSImage(contentsOf: url) else { return nil }
+        return img
     }
 
     // MARK: - Fetching
@@ -119,12 +159,10 @@ final class URLMetadataStore {
 
     private static func oEmbedEndpoint(for url: URL) -> URL? {
         let s = url.absoluteString
-        // YouTube
         if url.host?.contains("youtube.com") == true || url.host?.contains("youtu.be") == true {
             let encoded = s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? s
             return URL(string: "https://www.youtube.com/oembed?url=\(encoded)&format=json")
         }
-        // Vimeo
         if url.host?.contains("vimeo.com") == true {
             let encoded = s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? s
             return URL(string: "https://vimeo.com/api/oembed.json?url=\(encoded)")
