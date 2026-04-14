@@ -1,5 +1,0 @@
----
-triple:          'arm64-apple-darwin'
-binary-path:     '/Users/zeffut/Desktop/Projets/Valt/build/Build/Products/Release/Valt.app/Contents/MacOS/Valt'
-relocations:     []
-...
