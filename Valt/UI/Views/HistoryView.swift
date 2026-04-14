@@ -38,6 +38,10 @@ struct HistoryView: View {
                             proxy.scrollTo(newIndex, anchor: .center)
                         }
                     }
+                    // Réouverture du panneau → scroll immédiat vers l'item 0 (le plus récent)
+                    .onChange(of: selection.resetToken) { _, _ in
+                        proxy.scrollTo(0, anchor: .leading)
+                    }
                 }
             }
         }

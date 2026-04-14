@@ -24,11 +24,12 @@ final class ClipboardMonitor {
         timer = nil
     }
 
-    /// Appelé par PanelController : 0.5s quand panneau visible, 2s sinon
+    /// Appelé par PanelController : poll immédiat + 0.5s quand panneau visible, 2s sinon
     func setFastPolling(_ fast: Bool) {
         guard fast != fastPolling else { return }
         fastPolling = fast
         timer?.invalidate()
+        if fast { poll() } // capture immédiate à l'ouverture
         scheduleTimer(interval: fast ? 0.5 : 2.0)
     }
 

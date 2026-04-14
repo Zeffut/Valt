@@ -23,7 +23,11 @@ final class SelectionModel {
         pasteTrigger += 1
     }
 
+    /// Incrémenté à chaque reset → permet à HistoryView de détecter une réouverture du panneau
+    var resetToken: Int = 0
+
     func reset() {
         selectedIndex = 0
+        resetToken += 1
     }
 }
