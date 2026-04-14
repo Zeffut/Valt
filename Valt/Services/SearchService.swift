@@ -8,11 +8,15 @@ final class SearchService {
     private(set) var results: [ClipItem] = []
     private(set) var query: String = ""
 
-    private let context: NSManagedObjectContext
+    private let mainContext: NSManagedObjectContext
+    private let bgContext: NSManagedObjectContext
     private var debounceTask: Task<Void, Never>?
 
     init(context: NSManagedObjectContext) {
-        self.context = context
+        self.mainContext = context
+        // Contexte dédié pour les fetches — ne bloque pas le MainActor
+        self.bgContext = context.newBackgroundContext()
+        self.bgContext.automaticallyMergesChangesFromParent = true
     }
 
     func search(_ text: String) {
@@ -21,7 +25,7 @@ final class SearchService {
         debounceTask = Task {
             try? await Task.sleep(for: .milliseconds(150))
             guard !Task.isCancelled else { return }
-            self.performSearch(text)
+            await self.performSearch(text)
         }
     }
 
@@ -31,15 +35,35 @@ final class SearchService {
         debounceTask?.cancel()
     }
 
-    private func performSearch(_ text: String) {
-        let req = ClipItem.fetchRequest()
-        req.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
-        req.fetchLimit = 200
-        if !text.isEmpty {
-            req.predicate = NSPredicate(format: "plainText CONTAINS[cd] %@ AND pinboard == nil", text)
-        } else {
-            req.predicate = NSPredicate(format: "pinboard == nil")
+    private func performSearch(_ text: String) async {
+        let ctx = bgContext
+        let objectIDs: [NSManagedObjectID] = await Task.detached {
+            var ids: [NSManagedObjectID] = []
+            ctx.performAndWait {
+                let req = NSFetchRequest<NSManagedObjectID>(entityName: "ClipItem")
+                req.resultType = .managedObjectIDResultType
+                req.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+                req.fetchLimit = 200
+                req.predicate = text.isEmpty
+                    ? NSPredicate(format: "pinboard == nil")
+                    : NSPredicate(format: "plainText CONTAINS[cd] %@ AND pinboard == nil", text)
+                ids = (try? ctx.fetch(req)) ?? []
+            }
+            return ids
+        }.value
+
+        // Réhydrater les objets sur le MainActor depuis le context principal
+        guard !Task.isCancelled else { return }
+        results = objectIDs.compactMap {
+            try? mainContext.existingObject(with: $0) as? ClipItem
         }
-        results = (try? context.fetch(req)) ?? []
+    }
+}
+
+extension NSManagedObjectContext {
+    func newBackgroundContext() -> NSManagedObjectContext {
+        let ctx = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        ctx.parent = self
+        return ctx
     }
 }

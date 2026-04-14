@@ -44,13 +44,36 @@ final class ClipItem: NSManagedObject {
         return try? context.fetch(req).first
     }
 
-    /// Supprime les anciens clips hors pinboard au-delà de `limit`
+    /// Supprime les anciens clips hors pinboard au-delà de `limit` via NSBatchDeleteRequest.
+    /// N'appelle PAS save() — c'est à l'appelant de le faire.
     static func purgeOldItems(keeping limit: Int, in context: NSManagedObjectContext) {
-        let req = fetchRequest()
-        req.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
-        req.predicate = NSPredicate(format: "pinboard == nil")
-        guard let items = try? context.fetch(req), items.count > limit else { return }
-        items.dropFirst(limit).forEach { context.delete($0) }
-        try? context.save()
+        // Compter d'abord pour éviter un fetch inutile
+        let countReq = fetchRequest()
+        countReq.predicate = NSPredicate(format: "pinboard == nil")
+        guard let total = try? context.count(for: countReq), total > limit else { return }
+
+        // Récupérer uniquement les IDs des items à conserver (les plus récents)
+        let keepReq = fetchRequest()
+        keepReq.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+        keepReq.predicate = NSPredicate(format: "pinboard == nil")
+        keepReq.fetchLimit = limit
+        keepReq.resultType = .managedObjectIDResultType
+        guard let keepIDs = try? context.fetch(keepReq) as? [NSManagedObjectID] else { return }
+
+        // Supprimer tout ce qui n'est pas dans la liste des IDs à conserver
+        let deleteReq = NSFetchRequest<NSFetchRequestResult>(entityName: "ClipItem")
+        deleteReq.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "pinboard == nil"),
+            NSPredicate(format: "NOT (self IN %@)", keepIDs)
+        ])
+        let batchDelete = NSBatchDeleteRequest(fetchRequest: deleteReq)
+        batchDelete.resultType = .resultTypeObjectIDs
+        if let result = try? context.execute(batchDelete) as? NSBatchDeleteResult,
+           let deleted = result.result as? [NSManagedObjectID] {
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: [NSDeletedObjectsKey: deleted],
+                into: [context]
+            )
+        }
     }
 }

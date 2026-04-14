@@ -1,0 +1,209 @@
+{
+  "" : {
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Valt-primary.dia",
+    "emit-module-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Valt-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Valt-primary-emit-module.dia",
+    "pch" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Valt-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Valt-primary.swiftdeps"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/App/AppDelegate.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/AppDelegate.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/AppDelegate.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/AppDelegate.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/AppDelegate.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/AppDelegate.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/AppDelegate~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/App/ValtApp.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtApp.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtApp.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtApp.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtApp.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtApp.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtApp.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtApp.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtApp~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/Data/ClipItem.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipItem.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipItem.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipItem.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipItem.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipItem.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipItem.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipItem.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipItem~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/Data/PersistenceController.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PersistenceController.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PersistenceController.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PersistenceController.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/PersistenceController.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PersistenceController.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PersistenceController.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PersistenceController.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PersistenceController~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/Data/Pinboard.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Pinboard.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Pinboard.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Pinboard.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/Pinboard.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Pinboard.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Pinboard.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Pinboard.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/Pinboard~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/Data/ValtDataModel.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtDataModel.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtDataModel.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtDataModel.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtDataModel.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtDataModel.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtDataModel.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtDataModel.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ValtDataModel~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/Services/ClipboardMonitor.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipboardMonitor.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipboardMonitor.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipboardMonitor.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipboardMonitor.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipboardMonitor.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipboardMonitor.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipboardMonitor.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipboardMonitor~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/Services/HotkeyManager.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HotkeyManager.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HotkeyManager.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HotkeyManager.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/HotkeyManager.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HotkeyManager.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HotkeyManager.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HotkeyManager.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HotkeyManager~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/Services/PasteboardService.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PasteboardService.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PasteboardService.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PasteboardService.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/PasteboardService.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PasteboardService.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PasteboardService.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PasteboardService.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PasteboardService~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/Services/SearchService.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchService.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchService.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchService.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchService.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchService.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchService.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchService.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchService~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/Services/URLMetadataStore.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/URLMetadataStore.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/URLMetadataStore.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/URLMetadataStore.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/URLMetadataStore.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/URLMetadataStore.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/URLMetadataStore.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/URLMetadataStore.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/URLMetadataStore~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/UI/Panel/PanelController.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PanelController.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PanelController.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PanelController.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/PanelController.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PanelController.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PanelController.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PanelController.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PanelController~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/UI/Panel/PastePanel.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PastePanel.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PastePanel.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PastePanel.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/PastePanel.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PastePanel.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PastePanel.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PastePanel.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PastePanel~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/UI/Views/ClipCellView.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipCellView.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipCellView.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipCellView.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipCellView.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipCellView.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipCellView.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipCellView.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ClipCellView~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/UI/Views/HistoryView.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HistoryView.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HistoryView.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HistoryView.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/HistoryView.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HistoryView.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HistoryView.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HistoryView.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/HistoryView~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/UI/Views/PreviewView.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PreviewView.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PreviewView.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PreviewView.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/PreviewView.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PreviewView.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PreviewView.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PreviewView.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/PreviewView~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/UI/Views/SearchBarView.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchBarView.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchBarView.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchBarView.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchBarView.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchBarView.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchBarView.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchBarView.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SearchBarView~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/UI/Views/SelectionModel.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SelectionModel.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SelectionModel.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SelectionModel.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/SelectionModel.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SelectionModel.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SelectionModel.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SelectionModel.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SelectionModel~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/UI/Views/SettingsView.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SettingsView.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SettingsView.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SettingsView.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SettingsView.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SettingsView.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/SettingsView~partial.swiftmodule"
+  },
+  "/Users/zeffut/Desktop/Projets/Valt/Valt/UI/Views/ShelfView.swift" : {
+    "const-values" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ShelfView.swiftconstvalues",
+    "dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ShelfView.d",
+    "diagnostics" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ShelfView.dia",
+    "index-unit-output-path" : "/Valt.build/Debug/Valt.build/Objects-normal/arm64/ShelfView.o",
+    "llvm-bc" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ShelfView.bc",
+    "object" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ShelfView.o",
+    "swift-dependencies" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ShelfView.swiftdeps",
+    "swiftmodule" : "/Users/zeffut/Desktop/Projets/Valt/build/Build/Intermediates.noindex/Valt.build/Debug/Valt.build/Objects-normal/arm64/ShelfView~partial.swiftmodule"
+  }
+}

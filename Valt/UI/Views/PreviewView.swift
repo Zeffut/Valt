@@ -2,12 +2,38 @@
 import SwiftUI
 import AppKit
 
+// MARK: - Regexes statiques (compilées une seule fois au démarrage)
+
+private enum Regexes {
+    static let cssColor: NSRegularExpression = try! NSRegularExpression(
+        pattern: #"rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)"#
+    )
+    static let email: NSRegularExpression = try! NSRegularExpression(
+        pattern: #"^[A-Z0-9a-z._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"#,
+        options: .caseInsensitive
+    )
+    static let code: [NSRegularExpression] = [
+        #"func\s+\w+\s*\("#,
+        #"def\s+\w+\s*\("#,
+        #"class\s+\w+[\s:{]"#,
+        #"import\s+[\w.]+"#,
+        #"const\s+\w+\s*="#,
+        #"let\s+\w+\s*="#,
+        #"var\s+\w+\s*="#,
+        #"if\s*\(.+\)\s*\{"#,
+        #"for\s*\(.+\)\s*\{"#,
+        #"^\s*<\?xml"#,
+        #"^\s*<html"#,
+        #"->\s*\w+"#,
+    ].compactMap { try? NSRegularExpression(pattern: $0, options: [.caseInsensitive, .anchorsMatchLines]) }
+}
+
 // MARK: - Content type detection
 
 enum ClipContent {
     case image
     case url(String)
-    case color(Color, String)   // color + hex/css label
+    case color(Color, String, Bool) // color, label, isLight (précalculé)
     case json(String)
     case code(String)
     case filePath(String)
@@ -16,67 +42,40 @@ enum ClipContent {
 
     static func detect(item: ClipItem) -> ClipContent {
         switch item.type {
-        case "image":
-            return .image
-        case "url":
-            return .url(item.plainText ?? "")
-        default:
-            break
+        case "image": return .image
+        case "url":   return .url(item.plainText ?? "")
+        default:      break
         }
         let text = item.plainText ?? ""
-
-        // Hex color: #RGB, #RGBA, #RRGGBB, #RRGGBBAA
-        if let color = Color(hexString: text) {
-            return .color(color, text.trimmingCharacters(in: .whitespacesAndNewlines))
-        }
-        // CSS rgb() / rgba()
-        if let color = Color(cssString: text) {
-            return .color(color, text.trimmingCharacters(in: .whitespacesAndNewlines))
-        }
-        // Email
-        let emailRegex = #"^[A-Z0-9a-z._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"#
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).range(of: emailRegex, options: .regularExpression) != nil {
-            return .email(text.trimmingCharacters(in: .whitespacesAndNewlines))
-        }
-        // File path
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if let color = Color(hexString: trimmed) {
+            return .color(color, trimmed, color.luminance > 0.5)
+        }
+        if let color = Color(cssString: trimmed) {
+            return .color(color, trimmed, color.luminance > 0.5)
+        }
+        let nsRange = NSRange(trimmed.startIndex..., in: trimmed)
+        if Regexes.email.firstMatch(in: trimmed, range: nsRange) != nil {
+            return .email(trimmed)
+        }
         if (trimmed.hasPrefix("/") || trimmed.hasPrefix("~/")) && !trimmed.contains("\n") && trimmed.count < 512 {
             return .filePath(trimmed)
         }
-        // JSON
         if let data = text.data(using: .utf8),
            (try? JSONSerialization.jsonObject(with: data)) != nil,
-           text.trimmingCharacters(in: .whitespaces).first.map({ $0 == "{" || $0 == "[" }) == true {
+           let first = trimmed.first, first == "{" || first == "[" {
             return .json(text)
         }
-        // Code heuristics
-        if looksLikeCode(text) {
-            return .code(text)
-        }
+        if looksLikeCode(text) { return .code(text) }
         return .text(text)
     }
 
     private static func looksLikeCode(_ text: String) -> Bool {
-        let codePatterns = [
-            #"func\s+\w+\s*\("#,
-            #"def\s+\w+\s*\("#,
-            #"class\s+\w+[\s:{]"#,
-            #"import\s+[\w.]+"#,
-            #"const\s+\w+\s*="#,
-            #"let\s+\w+\s*="#,
-            #"var\s+\w+\s*="#,
-            #"if\s*\(.+\)\s*\{"#,
-            #"for\s*\(.+\)\s*\{"#,
-            #"^\s*<\?xml"#,
-            #"^\s*<html"#,
-            #"->\s*\w+"#,
-        ]
-        for pattern in codePatterns {
-            if text.range(of: pattern, options: [.regularExpression, .caseInsensitive]) != nil {
-                return true
-            }
+        let range = NSRange(text.startIndex..., in: text)
+        for regex in Regexes.code {
+            if regex.firstMatch(in: text, range: range) != nil { return true }
         }
-        // High density of special characters suggests code
         let specialChars = text.filter { "{}[]()<>=;:,|&!".contains($0) }
         return text.count > 20 && Double(specialChars.count) / Double(text.count) > 0.08
     }
@@ -86,17 +85,13 @@ enum ClipContent {
 
 extension Color {
     init?(hexString raw: String) {
-        let s = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard s.hasPrefix("#") else { return nil }
-        let hex = String(s.dropFirst())
+        guard raw.hasPrefix("#") else { return nil }
+        let hex = String(raw.dropFirst())
         let count = hex.count
-        guard count == 3 || count == 4 || count == 6 || count == 8 else { return nil }
-        guard hex.allSatisfy({ $0.isHexDigit }) else { return nil }
-
+        guard count == 3 || count == 4 || count == 6 || count == 8,
+              hex.allSatisfy({ $0.isHexDigit }) else { return nil }
         var full = hex
-        if count == 3 || count == 4 {
-            full = hex.map { "\($0)\($0)" }.joined()
-        }
+        if count == 3 || count == 4 { full = hex.map { "\($0)\($0)" }.joined() }
         guard let value = UInt64(full, radix: 16) else { return nil }
         let hasAlpha = full.count == 8
         let r, g, b, a: Double
@@ -116,9 +111,8 @@ extension Color {
 
     init?(cssString raw: String) {
         let s = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let pattern = #"rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)"#
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: s, range: NSRange(s.startIndex..., in: s)),
+        let nsRange = NSRange(s.startIndex..., in: s)
+        guard let match = Regexes.cssColor.firstMatch(in: s, range: nsRange),
               match.numberOfRanges >= 4 else { return nil }
         func cap(_ i: Int) -> Double? {
             guard let range = Range(match.range(at: i), in: s) else { return nil }
@@ -129,15 +123,12 @@ extension Color {
         self = Color(red: r / 255, green: g / 255, blue: b / 255, opacity: a)
     }
 
-    var isLight: Bool {
-        guard let cgColor = NSColor(self).cgColor.converted(
-            to: CGColorSpace(name: CGColorSpace.sRGB)!,
-            intent: .defaultIntent,
-            options: nil
-        ) else { return true }
-        let comps = cgColor.components ?? [0, 0, 0, 1]
-        let luminance = 0.2126 * comps[0] + 0.7152 * comps[1] + 0.0722 * comps[2]
-        return luminance > 0.5
+    // Luminance calculée une fois, sans conversion de color space
+    var luminance: Double {
+        let ns = NSColor(self).usingColorSpace(.deviceRGB) ?? NSColor(self)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0
+        ns.getRed(&r, green: &g, blue: &b, alpha: nil)
+        return 0.2126 * Double(r) + 0.7152 * Double(g) + 0.0722 * Double(b)
     }
 }
 
@@ -145,17 +136,19 @@ extension Color {
 
 struct PreviewView: View {
     let item: ClipItem
+    // Détection mémoïsée : ne s'exécute qu'une fois par item, pas à chaque rendu
+    @State private var content: ClipContent? = nil
 
     var body: some View {
-        let content = ClipContent.detect(item: item)
+        let c = content ?? ClipContent.detect(item: item)
         Group {
-            switch content {
+            switch c {
             case .image:
                 ImagePreviewView(item: item)
             case .url(let urlString):
                 URLPreviewView(urlString: urlString)
-            case .color(let color, let label):
-                ColorPreviewView(color: color, label: label)
+            case .color(let color, let label, let isLight):
+                ColorPreviewView(color: color, label: label, isLight: isLight)
             case .json(let text):
                 CodePreviewView(text: text, language: "JSON")
             case .code(let text):
@@ -169,6 +162,9 @@ struct PreviewView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            if content == nil { content = ClipContent.detect(item: item) }
+        }
     }
 }
 
@@ -211,7 +207,6 @@ private struct URLPreviewView: View {
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            // Background: OG image or gradient
             if let ogImg = meta?.ogImage {
                 Image(nsImage: ogImg)
                     .resizable()
@@ -224,8 +219,6 @@ private struct URLPreviewView: View {
                     endPoint: .bottomTrailing
                 )
             }
-
-            // Bottom overlay
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     if let favicon = meta?.faviconImage {
@@ -283,6 +276,7 @@ private struct URLPreviewView: View {
 private struct ColorPreviewView: View {
     let color: Color
     let label: String
+    let isLight: Bool  // précalculé dans ClipContent.detect, pas recompilé à chaque rendu
 
     var body: some View {
         ZStack {
@@ -293,11 +287,11 @@ private struct ColorPreviewView: View {
                     .frame(width: 48, height: 48)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6)
-                            .stroke(color.isLight ? Color.black.opacity(0.2) : Color.white.opacity(0.3), lineWidth: 1)
+                            .stroke(isLight ? Color.black.opacity(0.2) : Color.white.opacity(0.3), lineWidth: 1)
                     )
                 Text(label)
                     .font(.system(size: 11, weight: .medium, design: .monospaced))
-                    .foregroundStyle(color.isLight ? Color.black.opacity(0.8) : Color.white.opacity(0.9))
+                    .foregroundStyle(isLight ? Color.black.opacity(0.8) : Color.white.opacity(0.9))
             }
         }
     }
@@ -334,18 +328,13 @@ private struct CodePreviewView: View {
 private struct FilePathPreviewView: View {
     let path: String
 
-    private var components: [String] {
-        path.components(separatedBy: "/").filter { !$0.isEmpty }
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: 24))
                 .foregroundStyle(.secondary)
-
             VStack(alignment: .leading, spacing: 2) {
-                if let last = components.last {
+                if let last = path.components(separatedBy: "/").filter({ !$0.isEmpty }).last {
                     Text(last)
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.primary)
@@ -365,14 +354,14 @@ private struct FilePathPreviewView: View {
     private var icon: String {
         let ext = path.components(separatedBy: ".").last?.lowercased() ?? ""
         switch ext {
-        case "pdf": return "doc.richtext"
-        case "png", "jpg", "jpeg", "gif", "webp", "heic": return "photo"
-        case "mp4", "mov", "avi": return "film"
-        case "mp3", "wav", "aac", "m4a": return "music.note"
-        case "zip", "tar", "gz", "rar": return "archivebox"
-        case "swift", "py", "js", "ts", "rb", "go", "rs": return "doc.text"
-        case "app", "dmg", "pkg": return "app.badge"
-        default: return "folder"
+        case "pdf":                              return "doc.richtext"
+        case "png","jpg","jpeg","gif","webp","heic": return "photo"
+        case "mp4","mov","avi":                  return "film"
+        case "mp3","wav","aac","m4a":            return "music.note"
+        case "zip","tar","gz","rar":             return "archivebox"
+        case "swift","py","js","ts","rb","go","rs": return "doc.text"
+        case "app","dmg","pkg":                  return "app.badge"
+        default:                                 return "folder"
         }
     }
 }

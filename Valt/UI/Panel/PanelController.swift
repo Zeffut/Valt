@@ -7,12 +7,14 @@ final class PanelController {
     private var panel: PastePanel?
     private let persistence: PersistenceController
     private let pasteService: PasteboardService
+    private let monitor: ClipboardMonitor
     private let selection = SelectionModel()
     private var keyMonitor: Any?
 
-    init(persistence: PersistenceController, pasteService: PasteboardService) {
+    init(persistence: PersistenceController, pasteService: PasteboardService, monitor: ClipboardMonitor) {
         self.persistence = persistence
         self.pasteService = pasteService
+        self.monitor = monitor
     }
 
     func toggle() {
@@ -26,12 +28,14 @@ final class PanelController {
         panel?.orderFrontRegardless()
         panel?.makeKey()
         startKeyMonitor()
+        monitor.setFastPolling(true)
     }
 
     func hide() {
         panel?.orderOut(nil)
         stopKeyMonitor()
         selection.reset()
+        monitor.setFastPolling(false)
     }
 
     // MARK: - Keyboard navigation

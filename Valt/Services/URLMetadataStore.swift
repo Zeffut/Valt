@@ -17,7 +17,12 @@ final class URLMetadataStore {
     private var cache: [String: Metadata] = [:]
     private var fetching: Set<String> = []
 
-    private init() {}
+    private static let udKey = "valt.urlCache"
+    private static let maxHTMLBytes = 512 * 1024 // 512 Ko max — les balises OG sont dans le <head>
+
+    private init() {
+        loadPersistedCache()
+    }
 
     func metadata(for urlString: String) -> Metadata? {
         cache[urlString]
@@ -26,14 +31,33 @@ final class URLMetadataStore {
     func fetchIfNeeded(_ urlString: String) {
         guard cache[urlString] == nil, !fetching.contains(urlString) else { return }
         guard let url = URL(string: urlString) else { return }
-
         fetching.insert(urlString)
-
         Task {
             let meta = await Self.fetch(url: url, urlString: urlString)
             self.cache[urlString] = meta
             self.fetching.remove(urlString)
+            self.persistCache()
         }
+    }
+
+    // MARK: - Persistance (titres/domaines uniquement, pas les images)
+
+    private func loadPersistedCache() {
+        guard let dict = UserDefaults.standard.dictionary(forKey: Self.udKey) as? [String: [String: String]] else { return }
+        for (urlString, entry) in dict {
+            guard let domain = entry["domain"] else { continue }
+            cache[urlString] = Metadata(title: entry["title"], domain: domain)
+        }
+    }
+
+    private func persistCache() {
+        var dict: [String: [String: String]] = [:]
+        for (urlString, meta) in cache {
+            var entry: [String: String] = ["domain": meta.domain]
+            if let title = meta.title { entry["title"] = title }
+            dict[urlString] = entry
+        }
+        UserDefaults.standard.set(dict, forKey: Self.udKey)
     }
 
     // MARK: - Fetching
@@ -49,20 +73,23 @@ final class URLMetadataStore {
             meta.faviconImage = img
         }
 
-        // HTML fetch avec timeout court
+        // HTML fetch avec timeout court + limite de taille
         var request = URLRequest(url: url)
         request.timeoutInterval = 5
         request.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36", forHTTPHeaderField: "User-Agent")
+        request.setValue("text/html", forHTTPHeaderField: "Accept")
 
-        guard let (data, _) = try? await URLSession.shared.data(for: request),
-              let html = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1)
+        guard let (data, _) = try? await URLSession.shared.data(for: request) else { return meta }
+
+        // Tronquer à 512 Ko avant de parser
+        let truncated = data.count > maxHTMLBytes ? data.prefix(maxHTMLBytes) : data
+        guard let html = String(data: truncated, encoding: .utf8) ?? String(data: truncated, encoding: .isoLatin1)
         else { return meta }
 
         meta.title = ogTag(html, "og:title")
             ?? ogTag(html, "twitter:title")
             ?? htmlTitle(html)
 
-        // OG image
         if let imgStr = ogTag(html, "og:image"),
            let imgURL = URL(string: imgStr.hasPrefix("http") ? imgStr : baseURL(url) + imgStr),
            let (imgData, _) = try? await URLSession.shared.data(from: imgURL),
@@ -76,16 +103,13 @@ final class URLMetadataStore {
     // MARK: - HTML parsing
 
     private static func ogTag(_ html: String, _ property: String) -> String? {
-        // <meta property="og:title" content="..."> ou attributs inversés
         let patterns = [
             #"<meta[^>]+property=["']\#(property)["'][^>]+content=["']([^"'<>]+)["']"#,
             #"<meta[^>]+content=["']([^"'<>]+)["'][^>]+property=["']\#(property)["']"#,
             #"<meta[^>]+name=["']\#(property)["'][^>]+content=["']([^"'<>]+)["']"#,
         ]
         for pattern in patterns {
-            if let value = firstCapture(html, pattern: pattern) {
-                return htmlDecode(value)
-            }
+            if let value = firstCapture(html, pattern: pattern) { return htmlDecode(value) }
         }
         return nil
     }

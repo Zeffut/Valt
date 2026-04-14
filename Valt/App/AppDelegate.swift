@@ -19,7 +19,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         panelController = PanelController(
             persistence: persistence,
-            pasteService: PasteboardService.shared
+            pasteService: PasteboardService.shared,
+            monitor: monitor
         )
 
         hotkeyManager.onToggle = { [weak self] in

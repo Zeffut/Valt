@@ -8,6 +8,7 @@ final class ClipboardMonitor {
     private var lastChangeCount: Int
     private let maxItems = 500
     private let persistence: PersistenceController
+    private var fastPolling = false
 
     init(persistence: PersistenceController = .shared) {
         self.persistence = persistence
@@ -15,14 +16,26 @@ final class ClipboardMonitor {
     }
 
     func start() {
-        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
-            Task { @MainActor [weak self] in self?.poll() }
-        }
+        scheduleTimer(interval: 2.0) // lent par défaut, s'accélère à l'ouverture du panneau
     }
 
     func stop() {
         timer?.invalidate()
         timer = nil
+    }
+
+    /// Appelé par PanelController : 0.5s quand panneau visible, 2s sinon
+    func setFastPolling(_ fast: Bool) {
+        guard fast != fastPolling else { return }
+        fastPolling = fast
+        timer?.invalidate()
+        scheduleTimer(interval: fast ? 0.5 : 2.0)
+    }
+
+    private func scheduleTimer(interval: TimeInterval) {
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            Task { @MainActor [weak self] in self?.poll() }
+        }
     }
 
     private func poll() {
@@ -37,7 +50,6 @@ final class ClipboardMonitor {
         let context = persistence.context
 
         if let string = pasteboard.string(forType: .string) {
-            // Éviter les doublons consécutifs
             if let latest = ClipItem.fetchLatest(in: context),
                latest.type == clipType(for: string),
                latest.plainText == string { return }
@@ -50,7 +62,6 @@ final class ClipboardMonitor {
                 sourceAppName: frontAppName(),
                 in: context
             )
-
         } else if let image = NSImage(pasteboard: pasteboard),
                   let tiff = image.tiffRepresentation {
             if let latest = ClipItem.fetchLatest(in: context),
@@ -69,8 +80,9 @@ final class ClipboardMonitor {
             return
         }
 
-        persistence.save()
+        // Un seul save — purgeOldItems ne save plus lui-même
         ClipItem.purgeOldItems(keeping: maxItems, in: context)
+        persistence.save()
     }
 
     private func clipType(for string: String) -> String {
