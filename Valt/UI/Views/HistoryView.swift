@@ -7,6 +7,8 @@ struct HistoryView: View {
     let onPaste: (ClipItem) -> Void
     let onCopy: (ClipItem) -> Void
 
+    @State private var scrollProxy: ScrollViewProxy? = nil
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if items.isEmpty {
@@ -33,12 +35,12 @@ struct HistoryView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                     }
+                    .onAppear { scrollProxy = proxy }
                     .onChange(of: selection.selectedIndex) { _, newIndex in
                         withAnimation(.easeInOut(duration: 0.15)) {
                             proxy.scrollTo(newIndex, anchor: .center)
                         }
                     }
-                    // Réouverture du panneau → scroll immédiat vers l'item 0 (le plus récent)
                     .onChange(of: selection.resetToken) { _, _ in
                         proxy.scrollTo(0, anchor: .leading)
                     }
@@ -48,8 +50,12 @@ struct HistoryView: View {
         .onAppear {
             selection.count = items.count
         }
-        .onChange(of: items.count) { _, count in
+        .onChange(of: items.count) { old, count in
             selection.count = count
+            // Nouvel item capturé → scroll automatique vers le plus récent
+            if count > old {
+                scrollProxy?.scrollTo(0, anchor: .leading)
+            }
         }
     }
 }

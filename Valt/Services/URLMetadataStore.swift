@@ -18,15 +18,11 @@ final class URLMetadataStore {
     private var fetching: Set<String> = []
 
     private static let udKey = "valt.urlCache"
-    private static let maxHTMLBytes = 512 * 1024 // 512 Ko max — les balises OG sont dans le <head>
+    private static let maxHTMLBytes = 512 * 1024
 
-    private init() {
-        loadPersistedCache()
-    }
+    private init() { loadPersistedCache() }
 
-    func metadata(for urlString: String) -> Metadata? {
-        cache[urlString]
-    }
+    func metadata(for urlString: String) -> Metadata? { cache[urlString] }
 
     func fetchIfNeeded(_ urlString: String) {
         guard cache[urlString] == nil, !fetching.contains(urlString) else { return }
@@ -40,7 +36,7 @@ final class URLMetadataStore {
         }
     }
 
-    // MARK: - Persistance (titres/domaines uniquement, pas les images)
+    // MARK: - Persistance
 
     private func loadPersistedCache() {
         guard let dict = UserDefaults.standard.dictionary(forKey: Self.udKey) as? [String: [String: String]] else { return }
@@ -73,15 +69,25 @@ final class URLMetadataStore {
             meta.faviconImage = img
         }
 
-        // HTML fetch avec timeout court + limite de taille
+        // Plateformes vidéo : oEmbed (plus fiable et léger que HTML)
+        if let oEmbed = await fetchOEmbed(url: url) {
+            meta.title = oEmbed.title
+            if let thumbStr = oEmbed.thumbnailURL,
+               let thumbURL = URL(string: thumbStr),
+               let (imgData, _) = try? await URLSession.shared.data(from: thumbURL),
+               let img = NSImage(data: imgData) {
+                meta.ogImage = img
+            }
+            return meta
+        }
+
+        // HTML fetch standard avec limite de taille
         var request = URLRequest(url: url)
         request.timeoutInterval = 5
         request.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36", forHTTPHeaderField: "User-Agent")
         request.setValue("text/html", forHTTPHeaderField: "Accept")
 
         guard let (data, _) = try? await URLSession.shared.data(for: request) else { return meta }
-
-        // Tronquer à 512 Ko avant de parser
         let truncated = data.count > maxHTMLBytes ? data.prefix(maxHTMLBytes) : data
         guard let html = String(data: truncated, encoding: .utf8) ?? String(data: truncated, encoding: .isoLatin1)
         else { return meta }
@@ -98,6 +104,40 @@ final class URLMetadataStore {
         }
 
         return meta
+    }
+
+    // MARK: - oEmbed (YouTube, Vimeo, Twitter/X, etc.)
+
+    private struct OEmbedResponse: Decodable {
+        let title: String?
+        let thumbnailURL: String?
+        enum CodingKeys: String, CodingKey {
+            case title
+            case thumbnailURL = "thumbnail_url"
+        }
+    }
+
+    private static func oEmbedEndpoint(for url: URL) -> URL? {
+        let s = url.absoluteString
+        // YouTube
+        if url.host?.contains("youtube.com") == true || url.host?.contains("youtu.be") == true {
+            let encoded = s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? s
+            return URL(string: "https://www.youtube.com/oembed?url=\(encoded)&format=json")
+        }
+        // Vimeo
+        if url.host?.contains("vimeo.com") == true {
+            let encoded = s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? s
+            return URL(string: "https://vimeo.com/api/oembed.json?url=\(encoded)")
+        }
+        return nil
+    }
+
+    private static func fetchOEmbed(url: URL) async -> OEmbedResponse? {
+        guard let endpoint = oEmbedEndpoint(for: url) else { return nil }
+        var req = URLRequest(url: endpoint)
+        req.timeoutInterval = 5
+        guard let (data, _) = try? await URLSession.shared.data(for: req) else { return nil }
+        return try? JSONDecoder().decode(OEmbedResponse.self, from: data)
     }
 
     // MARK: - HTML parsing
