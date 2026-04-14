@@ -1,2 +1,26 @@
+# Build
 build/
-Valt.dmg
+DerivedData/
+*.dmg
+*.pkg
+
+# Xcode
+*.xcuserstate
+*.xcuserdatad/
+xcuserdata/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Docs internes
+docs/superpowers/
