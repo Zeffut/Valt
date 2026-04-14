@@ -38,6 +38,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotkeyManager.stop()
     }
 
+    // Double-clic sur l'icône app (Finder/Dock) → ouvre le panneau au lieu de relancer
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        panelController.show()
+        return false
+    }
+
     private func buildStatusBar() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.button?.image = NSImage(
