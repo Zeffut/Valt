@@ -24,11 +24,15 @@ final class PanelController {
     func show() {
         pasteService.recordActiveApp()
         if panel == nil { buildPanel() }
-        selection.reset()
+        // Montrer le panel EN PREMIER — SwiftUI reprend l'observation avant qu'on change resetToken
         panel?.orderFrontRegardless()
         panel?.makeKey()
         startKeyMonitor()
         monitor.setFastPolling(true)
+        // Déférer le reset d'un tick pour que SwiftUI soit bien actif quand resetToken change
+        Task { @MainActor in
+            selection.reset()
+        }
     }
 
     func hide() {

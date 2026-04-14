@@ -42,7 +42,10 @@ struct HistoryView: View {
                         }
                     }
                     .onChange(of: selection.resetToken) { _, _ in
-                        proxy.scrollTo(0, anchor: .leading)
+                        // Délai d'un tick pour que le FetchRequest ait mis à jour la liste
+                        DispatchQueue.main.async {
+                            proxy.scrollTo(0, anchor: .leading)
+                        }
                     }
                 }
             }
