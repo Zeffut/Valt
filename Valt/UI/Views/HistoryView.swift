@@ -3,7 +3,7 @@ import SwiftUI
 
 struct HistoryView: View {
     let items: [ClipItem]
-    let selection: SelectionModel
+    @ObservedObject var selection: SelectionModel
     let onPaste: (ClipItem) -> Void
     let onCopy: (ClipItem) -> Void
 

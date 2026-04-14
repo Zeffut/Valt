@@ -1,13 +1,11 @@
 // Valt/UI/Views/SelectionModel.swift
-import Observation
+import Combine
 
-/// État de sélection partagé entre PanelController (navigation clavier) et ShelfView (rendu + paste)
-@Observable
-final class SelectionModel {
-    var selectedIndex: Int = 0
-    var count: Int = 0
-    /// Incrémenté par PanelController quand l'utilisateur appuie sur Entrée → ShelfView réagit et colle
-    var pasteTrigger: Int = 0
+final class SelectionModel: ObservableObject {
+    @Published var selectedIndex: Int = 0
+    @Published var count: Int = 0
+    @Published var pasteTrigger: Int = 0
+    @Published var resetToken: Int = 0
 
     func moveLeft() {
         guard selectedIndex > 0 else { return }
@@ -22,9 +20,6 @@ final class SelectionModel {
     func triggerPaste() {
         pasteTrigger += 1
     }
-
-    /// Incrémenté à chaque reset → permet à HistoryView de détecter une réouverture du panneau
-    var resetToken: Int = 0
 
     func reset() {
         selectedIndex = 0

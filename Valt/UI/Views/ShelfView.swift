@@ -4,7 +4,7 @@ import CoreData
 
 struct ShelfView: View {
     let persistence: PersistenceController
-    let selection: SelectionModel
+    @ObservedObject var selection: SelectionModel
     let onPaste: (ClipItem) -> Void
     let onCopy: (ClipItem) -> Void
     let onDismiss: () -> Void
