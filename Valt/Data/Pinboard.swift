@@ -23,4 +23,12 @@ final class Pinboard: NSManagedObject {
         pb.position = 0
         return pb
     }
+
+    static func create(name: String, in context: NSManagedObjectContext) -> Pinboard {
+        let pb = Pinboard(context: context)
+        pb.id = UUID()
+        pb.name = name
+        pb.position = Int16((try? context.count(for: fetchRequest())) ?? 0)
+        return pb
+    }
 }

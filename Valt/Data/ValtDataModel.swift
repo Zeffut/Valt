@@ -53,7 +53,7 @@ extension NSManagedObjectModel {
         toMany.minCount = 0
         toMany.maxCount = 0   // to-many
         toMany.isOptional = true
-        toMany.deleteRule = .cascadeDeleteRule
+        toMany.deleteRule = .nullifyDeleteRule
 
         toOne.inverseRelationship = toMany
         toMany.inverseRelationship = toOne
