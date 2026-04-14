@@ -19,6 +19,8 @@
 		67527B1CAF994152A4431A7C /* ValtApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E116FCA721E25683D82D354 /* ValtApp.swift */; };
 		6AA7E78C855A96B91216A2FD /* PastePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D78447784CFE329780ADAC /* PastePanel.swift */; };
 		827F8C082F4FF5A6B9C066BA /* ValtDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F52C86C435069A7107DF82 /* ValtDataModel.swift */; };
+		8675150D13481D0D35FD9C47 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71F470B74D0D3CEE9E4BA89 /* TabBarView.swift */; };
+		89B7991F8B6E2DA0AD4FC25E /* ActiveTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AAEED460B7B496892481C7 /* ActiveTab.swift */; };
 		93389CB9ECEF915311788C9A /* PasteboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979EA9A51426C85A8ADA0FBD /* PasteboardService.swift */; };
 		96A23AE1CE4BF4DCAC5978E4 /* Pinboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3315150CD802AA1444C2C1 /* Pinboard.swift */; };
 		99B9FA0F2142C8C2C54320F8 /* URLMetadataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDEF26BAD5D6220E902F335 /* URLMetadataStore.swift */; };
@@ -32,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		02AAEED460B7B496892481C7 /* ActiveTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveTab.swift; sourceTree = "<group>"; };
 		07B62173750BD146E189EDCF /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		19F52C86C435069A7107DF82 /* ValtDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValtDataModel.swift; sourceTree = "<group>"; };
 		202FB15358F94EB6BFB06879 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -51,6 +54,7 @@
 		9435B407A4F83C0C1196C3D8 /* SearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
 		979EA9A51426C85A8ADA0FBD /* PasteboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardService.swift; sourceTree = "<group>"; };
 		9C98EE8A1526C776E9AFE8B6 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		A71F470B74D0D3CEE9E4BA89 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		B4BBC2B45427A676880E1F73 /* ClipboardMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardMonitor.swift; sourceTree = "<group>"; };
 		B7ED8F5D1919E0F86BA99F11 /* SelectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionModel.swift; sourceTree = "<group>"; };
 		CB5FD9B8E1886170E237923E /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
@@ -136,6 +140,7 @@
 		C688FA4929C6106CF2D9B427 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				02AAEED460B7B496892481C7 /* ActiveTab.swift */,
 				7BBD35AAE9B924C6FDBCE3D5 /* ClipCellView.swift */,
 				CB5FD9B8E1886170E237923E /* HistoryView.swift */,
 				9C98EE8A1526C776E9AFE8B6 /* PreviewView.swift */,
@@ -143,6 +148,7 @@
 				B7ED8F5D1919E0F86BA99F11 /* SelectionModel.swift */,
 				2F097DB8FCC6F2537519EB7F /* SettingsView.swift */,
 				2CBE35DDA6AD522411F57CF1 /* ShelfView.swift */,
+				A71F470B74D0D3CEE9E4BA89 /* TabBarView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -216,6 +222,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				89B7991F8B6E2DA0AD4FC25E /* ActiveTab.swift in Sources */,
 				56A3BABA62472EF1E9A3DE11 /* AppDelegate.swift in Sources */,
 				227D85FF2E97243CC5455AF4 /* ClipCellView.swift in Sources */,
 				F6B5450F716774640B5E19BF /* ClipItem.swift in Sources */,
@@ -233,6 +240,7 @@
 				45CF3419623198429E338723 /* SelectionModel.swift in Sources */,
 				210F6B4B50A1F10520CF1EA9 /* SettingsView.swift in Sources */,
 				199B97ED178EEEB541BBA0AE /* ShelfView.swift in Sources */,
+				8675150D13481D0D35FD9C47 /* TabBarView.swift in Sources */,
 				99B9FA0F2142C8C2C54320F8 /* URLMetadataStore.swift in Sources */,
 				E43A5C76875049531A096411 /* UpdateChecker.swift in Sources */,
 				59ADA95D224124D57D74C605 /* UpdateInstaller.swift in Sources */,

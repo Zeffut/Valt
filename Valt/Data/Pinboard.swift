@@ -2,7 +2,7 @@
 import CoreData
 
 @objc(Pinboard)
-final class Pinboard: NSManagedObject {
+final class Pinboard: NSManagedObject, Identifiable {
     @NSManaged var id: UUID
     @NSManaged var name: String
     @NSManaged var position: Int16
