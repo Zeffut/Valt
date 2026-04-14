@@ -24,6 +24,7 @@
 		AF1ADA66504442DDB1070CEE /* ClipboardMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BBC2B45427A676880E1F73 /* ClipboardMonitor.swift */; };
 		DAB5498BAE6A07C6848B03A8 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3218971D591177E0D03FC7A3 /* SearchBarView.swift */; };
 		DF995EEC7BE8E006E9AE3014 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9435B407A4F83C0C1196C3D8 /* SearchService.swift */; };
+		E43A5C76875049531A096411 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3017C34A0BA1C194E81EC9A6 /* UpdateChecker.swift */; };
 		F6B5450F716774640B5E19BF /* ClipItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 700BDA5318C2E03FFAC9F48D /* ClipItem.swift */; };
 		F6DBE6A0B43DB4024B493641 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9227C4B2AE15ECB36DB3C1D4 /* PersistenceController.swift */; };
 		FA725A14E6F330F89D452446 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98EE8A1526C776E9AFE8B6 /* PreviewView.swift */; };
@@ -36,6 +37,7 @@
 		2B3315150CD802AA1444C2C1 /* Pinboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pinboard.swift; sourceTree = "<group>"; };
 		2CBE35DDA6AD522411F57CF1 /* ShelfView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfView.swift; sourceTree = "<group>"; };
 		2F097DB8FCC6F2537519EB7F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		3017C34A0BA1C194E81EC9A6 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 		3218971D591177E0D03FC7A3 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		3DDEF26BAD5D6220E902F335 /* URLMetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLMetadataStore.swift; sourceTree = "<group>"; };
 		6DA25E829C0A85FAD9E7217C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				07B62173750BD146E189EDCF /* HotkeyManager.swift */,
 				979EA9A51426C85A8ADA0FBD /* PasteboardService.swift */,
 				9435B407A4F83C0C1196C3D8 /* SearchService.swift */,
+				3017C34A0BA1C194E81EC9A6 /* UpdateChecker.swift */,
 				3DDEF26BAD5D6220E902F335 /* URLMetadataStore.swift */,
 			);
 			path = Services;
@@ -228,6 +231,7 @@
 				210F6B4B50A1F10520CF1EA9 /* SettingsView.swift in Sources */,
 				199B97ED178EEEB541BBA0AE /* ShelfView.swift in Sources */,
 				99B9FA0F2142C8C2C54320F8 /* URLMetadataStore.swift in Sources */,
+				E43A5C76875049531A096411 /* UpdateChecker.swift in Sources */,
 				67527B1CAF994152A4431A7C /* ValtApp.swift in Sources */,
 				827F8C082F4FF5A6B9C066BA /* ValtDataModel.swift in Sources */,
 			);
@@ -252,7 +256,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valt.app;
 				PRODUCT_NAME = Valt;
 				SDKROOT = macosx;
@@ -333,7 +337,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valt.app;
 				PRODUCT_NAME = Valt;
 				SDKROOT = macosx;

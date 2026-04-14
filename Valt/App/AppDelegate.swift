@@ -33,6 +33,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         monitor.start()
         buildStatusBar()
         requestAccessibility()
+        // Vérification silencieuse au lancement (max 1 fois/jour)
+        UpdateChecker.shared.checkOnLaunch()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -69,6 +71,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         settingsItem.target = self
         menu.addItem(settingsItem)
+        let updateItem = NSMenuItem(
+            title: "Vérifier les mises à jour...",
+            action: #selector(checkForUpdates),
+            keyEquivalent: ""
+        )
+        updateItem.target = self
+        menu.addItem(updateItem)
         menu.addItem(.separator())
         let quitItem = NSMenuItem(
             title: "Quitter Valt",
@@ -100,6 +109,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow?.makeKeyAndOrderFront(nil)
     }
+
+    @objc private func checkForUpdates() { UpdateChecker.shared.checkNow() }
 
     @objc private func quit() { NSApp.terminate(nil) }
 
