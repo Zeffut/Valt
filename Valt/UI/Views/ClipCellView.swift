@@ -7,6 +7,7 @@ struct ClipCellView: View {
     let isSelected: Bool
     let onPaste: () -> Void
     let onCopy: () -> Void
+    let onPin: (() -> Void)? = nil
 
     @State private var isHovered = false
 
@@ -46,6 +47,22 @@ struct ClipCellView: View {
                 )
         )
         .shadow(color: isSelected ? Color.accentColor.opacity(0.3) : .clear, radius: 6)
+        .overlay(alignment: .topTrailing) {
+            if let onPin, isHovered {
+                Button(action: onPin) {
+                    Image(systemName: "pin.fill")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.white)
+                        .padding(6)
+                        .background(Color.accentColor)
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .padding(6)
+                .transition(.opacity.combined(with: .scale))
+            }
+        }
+        .animation(.easeInOut(duration: 0.15), value: isHovered)
         .onHover { isHovered = $0 }
         .onTapGesture(count: 2) { onCopy() }
         .onTapGesture(count: 1) { onPaste() }
