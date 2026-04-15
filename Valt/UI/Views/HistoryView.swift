@@ -24,6 +24,8 @@ struct HistoryView: View {
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 12) {
+                            // Ancre de début : scrollTo("start") respecte le padding horizontal
+                            Color.clear.frame(width: 0).id("start")
                             ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                                 ClipCellView(
                                     item: item,
@@ -36,9 +38,9 @@ struct HistoryView: View {
                                 .id(index)
                             }
                         }
+                        .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                     }
-                    .contentMargins(.horizontal, 16, for: .scrollContent)
                     .onAppear { scrollProxy = proxy }
                     .onChange(of: selection.selectedIndex) { _, newIndex in
                         withAnimation(.easeInOut(duration: 0.15)) {
@@ -46,9 +48,8 @@ struct HistoryView: View {
                         }
                     }
                     .onChange(of: selection.resetToken) { _, _ in
-                        // Délai d'un tick pour que le FetchRequest ait mis à jour la liste
                         DispatchQueue.main.async {
-                            proxy.scrollTo(0, anchor: .leading)
+                            proxy.scrollTo("start", anchor: .leading)
                         }
                     }
                 }
@@ -61,7 +62,7 @@ struct HistoryView: View {
             selection.count = count
             // Nouvel item capturé → scroll automatique vers le plus récent
             if count > old {
-                scrollProxy?.scrollTo(0, anchor: .leading)
+                scrollProxy?.scrollTo("start", anchor: .leading)
             }
         }
     }
