@@ -64,6 +64,7 @@ struct ShelfView: View {
     @State private var searchQuery = ""
     @State private var searchService: SearchService
     @State private var activeTab: ActiveTab = .history
+    @State private var isCreatingTab = false
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \ClipItem.createdAt, ascending: false)],
@@ -91,7 +92,7 @@ struct ShelfView: View {
         VStack(spacing: 0) {
             // Header : onglets + recherche
             VStack(spacing: 0) {
-                TabBarView(activeTab: $activeTab)
+                TabBarView(activeTab: $activeTab, isCreating: $isCreatingTab)
                     .environment(\.managedObjectContext, persistence.context)
                     .onChange(of: activeTab) { _, _ in
                         searchQuery = ""
@@ -127,6 +128,13 @@ struct ShelfView: View {
 
             contentView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay {
+                    if isCreatingTab {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onTapGesture { isCreatingTab = false }
+                    }
+                }
         }
         .onChange(of: historyItems.count) { _, count in
             if case .history = activeTab, searchQuery.isEmpty {

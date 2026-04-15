@@ -3,6 +3,7 @@ import SwiftUI
 
 struct TabBarView: View {
     @Binding var activeTab: ActiveTab
+    @Binding var isCreating: Bool
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Pinboard.position, ascending: true)],
@@ -12,7 +13,6 @@ struct TabBarView: View {
 
     @Environment(\.managedObjectContext) private var context
 
-    @State private var isCreating = false
     @State private var newName = ""
     @FocusState private var fieldFocused: Bool
 
@@ -52,9 +52,6 @@ struct TabBarView: View {
                         .focused($fieldFocused)
                         .onSubmit { confirmCreation() }
                         .onKeyPress(.escape) { cancelCreation(); return .handled }
-                        .onChange(of: fieldFocused) { _, focused in
-                            if !focused { cancelCreation() }
-                        }
                 }
 
                 // Bouton +
