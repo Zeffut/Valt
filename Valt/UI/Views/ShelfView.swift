@@ -47,39 +47,38 @@ struct ShelfView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Barre d'onglets
-            TabBarView(activeTab: $activeTab)
-                .environment(\.managedObjectContext, persistence.context)
-                .onChange(of: activeTab) { _, _ in
-                    searchQuery = ""
-                    selection.reset()
-                }
-
-            Divider()
-
-            // Barre de recherche + engrenage
-            HStack(spacing: 12) {
-                SearchBarView(query: $searchQuery)
-                    .onChange(of: searchQuery) { _, new in
-                        searchService.search(new)
+            // Header : onglets + recherche
+            VStack(spacing: 0) {
+                TabBarView(activeTab: $activeTab)
+                    .environment(\.managedObjectContext, persistence.context)
+                    .onChange(of: activeTab) { _, _ in
+                        searchQuery = ""
                         selection.reset()
                     }
-                Spacer()
-                Button {
-                    onDismiss()
-                    DispatchQueue.main.async {
-                        (NSApp.delegate as? AppDelegate)?.openSettings()
+
+                HStack(spacing: 12) {
+                    SearchBarView(query: $searchQuery)
+                        .onChange(of: searchQuery) { _, new in
+                            searchService.search(new)
+                            selection.reset()
+                        }
+                    Spacer()
+                    Button {
+                        onDismiss()
+                        DispatchQueue.main.async {
+                            (NSApp.delegate as? AppDelegate)?.openSettings()
+                        }
+                    } label: {
+                        Image(systemName: "gear")
+                            .font(.system(size: 15))
+                            .foregroundStyle(.secondary)
                     }
-                } label: {
-                    Image(systemName: "gear")
-                        .font(.system(size: 15))
-                        .foregroundStyle(.secondary)
+                    .buttonStyle(.plain)
+                    .padding(.trailing, 16)
                 }
-                .buttonStyle(.plain)
-                .padding(.trailing, 16)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
             .background(.ultraThinMaterial)
 
             Divider()

@@ -2,7 +2,7 @@
 import AppKit
 
 final class PastePanel: NSPanel {
-    static let panelHeight: CGFloat = 280
+    static let panelHeight: CGFloat = 320
 
     init() {
         let screen = NSScreen.main ?? NSScreen.screens[0]
