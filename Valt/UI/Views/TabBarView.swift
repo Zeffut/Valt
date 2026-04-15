@@ -84,6 +84,7 @@ struct TabBarView: View {
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)
+        .focusable(false)
     }
 
     private func confirmCreation() {
