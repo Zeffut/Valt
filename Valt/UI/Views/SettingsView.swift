@@ -76,10 +76,21 @@ struct SettingsView: View {
     }
 
     private func requestAndRefresh() {
-        // Ouvre le panneau Accessibilité des Préférences Système avec Valt déjà listé
-        let key = "AXTrustedCheckOptionPrompt" as CFString
-        let options = [key: true] as CFDictionary
-        _ = AXIsProcessTrustedWithOptions(options)
-        // Le statut sera mis à jour via didBecomeActiveNotification quand l'user revient
+        // 1. Supprime l'ancienne entrée (ancien hash binaire) — sinon macOS garde l'entrée
+        //    révoquée cochée et n'ajoute pas la nouvelle dans la liste.
+        let reset = Process()
+        reset.executableURL = URL(fileURLWithPath: "/usr/bin/tccutil")
+        reset.arguments = ["reset", "Accessibility", "com.valt.app"]
+        try? reset.run()
+        reset.waitUntilExit()
+
+        // 2. Déclenche le prompt : ouvre Préférences Système avec Valt dans la liste,
+        //    l'utilisateur n'a plus qu'à cocher.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            let key = "AXTrustedCheckOptionPrompt" as CFString
+            let options = [key: true] as CFDictionary
+            _ = AXIsProcessTrustedWithOptions(options)
+            accessibilityGranted = false // révoqué jusqu'à ce que l'user coche
+        }
     }
 }
