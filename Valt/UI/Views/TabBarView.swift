@@ -67,6 +67,7 @@ struct TabBarView: View {
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
+                .focusable(false)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 6)
@@ -84,7 +85,6 @@ struct TabBarView: View {
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)
-        .focusable(false)
     }
 
     private func confirmCreation() {
