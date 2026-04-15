@@ -93,6 +93,11 @@ struct ShelfView: View {
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .onChange(of: historyItems.count) { _, count in
+            if case .history = activeTab, searchQuery.isEmpty {
+                selection.count = count
+            }
+        }
         .onChange(of: selection.pasteTrigger) { _, _ in
             guard selection.selectedIndex < displayedItems.count else { return }
             onPaste(displayedItems[selection.selectedIndex])

@@ -32,6 +32,7 @@ final class PanelController {
         NSApp.activate(ignoringOtherApps: true)
         panel?.orderFrontRegardless()
         panel?.makeKey()
+        panel?.makeFirstResponder(nil)   // évite le focus ring sur le premier bouton
         startKeyMonitor()
         monitor.setFastPolling(true)
         selection.reset()
