@@ -23,23 +23,26 @@ struct HistoryView: View {
             } else {
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack(spacing: 12) {
-                            // Ancre de début : scrollTo("start") respecte le padding horizontal
-                            Color.clear.frame(width: 0).id("start")
-                            ForEach(Array(items.enumerated()), id: \.offset) { index, item in
-                                ClipCellView(
-                                    item: item,
-                                    isSelected: selection.selectedIndex == index,
-                                    onPaste: { onPaste(item) },
-                                    onCopy: { onCopy(item) },
-                                    onPin: onPin.map { pin in { pin(item) } },
-                                    onUnpin: onUnpin.map { unpin in { unpin(item) } }
-                                )
-                                .id(index)
+                        HStack(spacing: 0) {
+                            // Ancre à x=0 dans le contenu du scroll, AVANT le padding du LazyHStack.
+                            // scrollTo("start", .leading) → scroll offset 0 → padding visible.
+                            Color.clear.frame(width: 0, height: 1).id("start")
+                            LazyHStack(spacing: 12) {
+                                ForEach(Array(items.enumerated()), id: \.offset) { index, item in
+                                    ClipCellView(
+                                        item: item,
+                                        isSelected: selection.selectedIndex == index,
+                                        onPaste: { onPaste(item) },
+                                        onCopy: { onCopy(item) },
+                                        onPin: onPin.map { pin in { pin(item) } },
+                                        onUnpin: onUnpin.map { unpin in { unpin(item) } }
+                                    )
+                                    .id(index)
+                                }
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
                     }
                     .onAppear { scrollProxy = proxy }
                     .onChange(of: selection.selectedIndex) { _, newIndex in
