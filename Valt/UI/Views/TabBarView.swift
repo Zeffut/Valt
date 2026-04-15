@@ -58,7 +58,7 @@ struct TabBarView: View {
                 Button {
                     isCreating = true
                     newName = ""
-                    fieldFocused = true
+                    DispatchQueue.main.async { fieldFocused = true }
                 } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 11, weight: .medium))
@@ -90,7 +90,7 @@ struct TabBarView: View {
         let name = newName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { cancelCreation(); return }
         let pb = Pinboard.create(name: name, in: context)
-        try? context.save()
+        do { try context.save() } catch { print("[Valt] CoreData save failed: \(error)") }
         activeTab = .pinboard(pb)
         isCreating = false
     }
@@ -105,6 +105,6 @@ struct TabBarView: View {
             activeTab = .history
         }
         context.delete(pinboard)
-        try? context.save()
+        do { try context.save() } catch { print("[Valt] CoreData save failed: \(error)") }
     }
 }
