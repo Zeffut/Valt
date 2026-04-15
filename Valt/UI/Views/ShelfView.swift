@@ -72,7 +72,8 @@ struct ShelfView: View {
                 items: displayedItems,
                 selection: selection,
                 onPaste: onPaste,
-                onCopy: onCopy
+                onCopy: onCopy,
+                onPin: nil
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

@@ -6,6 +6,7 @@ struct HistoryView: View {
     @ObservedObject var selection: SelectionModel
     let onPaste: (ClipItem) -> Void
     let onCopy: (ClipItem) -> Void
+    let onPin: ((ClipItem) -> Void)?
 
     @State private var scrollProxy: ScrollViewProxy? = nil
 
@@ -27,7 +28,8 @@ struct HistoryView: View {
                                     item: item,
                                     isSelected: selection.selectedIndex == index,
                                     onPaste: { onPaste(item) },
-                                    onCopy: { onCopy(item) }
+                                    onCopy: { onCopy(item) },
+                                    onPin: onPin.map { pin in { pin(item) } }
                                 )
                                 .id(index)
                             }

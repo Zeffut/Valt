@@ -7,7 +7,7 @@ struct ClipCellView: View {
     let isSelected: Bool
     let onPaste: () -> Void
     let onCopy: () -> Void
-    let onPin: (() -> Void)? = nil
+    let onPin: (() -> Void)?
 
     @State private var isHovered = false
 
