@@ -49,13 +49,13 @@ struct ClipCellView: View {
         )
         .shadow(color: isSelected ? Color.accentColor.opacity(0.3) : .clear, radius: 6)
         .overlay(alignment: .topTrailing) {
-            if let onPin, isHovered {
-                Button(action: onPin) {
-                    Image(systemName: "pin.fill")
+            if isHovered, onPin != nil || onUnpin != nil {
+                Button(action: { onUnpin?() ?? onPin?() ?? () }) {
+                    Image(systemName: onUnpin != nil ? "pin.slash.fill" : "pin.fill")
                         .font(.system(size: 10))
                         .foregroundStyle(.white)
                         .padding(6)
-                        .background(Color.accentColor)
+                        .background(onUnpin != nil ? Color.secondary : Color.accentColor)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
