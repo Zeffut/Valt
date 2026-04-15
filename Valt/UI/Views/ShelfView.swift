@@ -115,22 +115,9 @@ struct ShelfView: View {
         let ctx = persistence.context
         let req = Pinboard.fetchRequest()
         req.sortDescriptors = [NSSortDescriptor(keyPath: \Pinboard.position, ascending: true)]
-        let pinboards = (try? ctx.fetch(req)) ?? []
-
-        let target: Pinboard
-        if let first = pinboards.first {
-            target = first
-        } else {
-            // Aucun pinboard → créer "Favoris" et basculer sur l'onglet
-            target = Pinboard.createDefault(in: ctx)
-        }
-
+        req.fetchLimit = 1
+        guard let target = (try? ctx.fetch(req))?.first else { return }
         item.pinboard = target
         do { try ctx.save() } catch { print("[Valt] CoreData save failed: \(error)") }
-
-        // Si on vient de créer le premier pinboard, basculer dessus
-        if pinboards.isEmpty {
-            activeTab = .pinboard(target)
-        }
     }
 }
