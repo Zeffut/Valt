@@ -1,27 +1,43 @@
 // Valt/UI/Views/ClipCellView.swift
 import SwiftUI
 import AppKit
+import UniformTypeIdentifiers
 
 struct ClipCellView: View {
-    let item: ClipItem
+    @ObservedObject var item: ClipItem
     let isSelected: Bool
     let onPaste: () -> Void
     let onCopy: () -> Void
-    let onPin: (() -> Void)?
-    let onUnpin: (() -> Void)?
+    let onTogglePin: (() -> Void)?
 
     @State private var isHovered = false
 
     private let cellWidth: CGFloat = 220
     private let cellHeight: CGFloat = 215
 
+    private var isValid: Bool { !item.isDeleted && item.managedObjectContext != nil }
+    private var isPinned: Bool { item.pinboard != nil }
+
     var body: some View {
+        Group {
+            if isValid {
+                content
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
         VStack(spacing: 0) {
             PreviewView(item: item)
                 .frame(width: cellWidth, height: cellHeight - 36)
                 .clipped()
 
             HStack(spacing: 4) {
+                Image(systemName: typeIcon)
+                    .font(.system(size: 10))
+                    .foregroundStyle(.tertiary)
+                    .frame(width: 14)
                 appIcon
                 Text(relativeDate)
                     .font(.system(size: 10))
@@ -49,13 +65,13 @@ struct ClipCellView: View {
         )
         .shadow(color: isSelected ? Color.accentColor.opacity(0.3) : .clear, radius: 6)
         .overlay(alignment: .topTrailing) {
-            if isHovered, onPin != nil || onUnpin != nil {
-                Button(action: { onUnpin?() ?? onPin?() ?? () }) {
-                    Image(systemName: onUnpin != nil ? "pin.slash.fill" : "pin.fill")
+            if let onTogglePin, isHovered || isSelected {
+                Button(action: onTogglePin) {
+                    Image(systemName: isPinned ? "pin.slash.fill" : "pin.fill")
                         .font(.system(size: 10))
                         .foregroundStyle(.white)
                         .padding(6)
-                        .background(onUnpin != nil ? Color.secondary : Color.accentColor)
+                        .background(isPinned ? Color.secondary : Color.accentColor)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -70,11 +86,39 @@ struct ClipCellView: View {
         .contextMenu {
             Button("Coller") { onPaste() }
             Button("Copier") { onCopy() }
-            if let onUnpin {
+            if let onTogglePin {
                 Divider()
-                Button("Retirer du pinboard") { onUnpin() }
+                Button(isPinned ? "Retirer des favoris" : "Ajouter aux favoris") {
+                    onTogglePin()
+                }
             }
         }
+        .onDrag {
+            let uri = item.objectID.uriRepresentation()
+            return NSItemProvider(object: uri as NSURL)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private var typeIcon: String {
+        switch item.type {
+        case "image": return "photo"
+        case "url":   return "globe"
+        default:
+            let t = item.plainText?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if t.hasPrefix("#") { return "paintpalette" }
+            if t.hasPrefix("{") || t.hasPrefix("[") { return "curlybraces" }
+            if t.hasPrefix("/") || t.hasPrefix("~/") { return "folder" }
+            if t.contains("@") && t.contains(".") && !t.contains(" ") { return "envelope" }
+            if looksLikeCode(t) { return "chevron.left.forwardslash.chevron.right" }
+            return "doc.text"
+        }
+    }
+
+    private func looksLikeCode(_ text: String) -> Bool {
+        let specials = text.filter { "{}[]()<>;".contains($0) }
+        return text.count > 20 && Double(specials.count) / Double(text.count) > 0.06
     }
 
     private var appIcon: some View {

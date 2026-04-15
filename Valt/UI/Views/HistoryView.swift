@@ -6,12 +6,8 @@ struct HistoryView: View {
     @ObservedObject var selection: SelectionModel
     let onPaste: (ClipItem) -> Void
     let onCopy: (ClipItem) -> Void
-    let onPin: ((ClipItem) -> Void)?
-    let onUnpin: ((ClipItem) -> Void)?
+    let onTogglePin: ((ClipItem) -> Void)?
 
-    // nil = pas de cible → ScrollView reste à son offset naturel (0 + contentMargins).
-    // Quand HistoryView est recréée via .id(resetToken) dans ShelfView, ce @State repart
-    // à nil → offset 0 garanti sans aucun appel à scrollTo().
     @State private var scrolledID: Int? = nil
 
     var body: some View {
@@ -26,16 +22,17 @@ struct HistoryView: View {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(spacing: 12) {
-                        ForEach(Array(items.enumerated()), id: \.offset) { index, item in
-                            ClipCellView(
-                                item: item,
-                                isSelected: selection.selectedIndex == index,
-                                onPaste: { onPaste(item) },
-                                onCopy: { onCopy(item) },
-                                onPin: onPin.map { pin in { pin(item) } },
-                                onUnpin: onUnpin.map { unpin in { unpin(item) } }
-                            )
-                            .id(index)
+                        ForEach(Array(items.enumerated()), id: \.element.objectID) { index, item in
+                            if !item.isDeleted {
+                                ClipCellView(
+                                    item: item,
+                                    isSelected: selection.selectedIndex == index,
+                                    onPaste: { onPaste(item) },
+                                    onCopy: { onCopy(item) },
+                                    onTogglePin: onTogglePin.map { toggle in { toggle(item) } }
+                                )
+                                .id(index)
+                            }
                         }
                     }
                     .padding(.vertical, 12)
@@ -44,7 +41,6 @@ struct HistoryView: View {
                 .scrollPosition(id: $scrolledID, anchor: .center)
                 .onChange(of: selection.selectedIndex) { _, newIndex in
                     if newIndex == 0 {
-                        // nil = pas de cible → offset 0 naturel, contentMargins visible
                         scrolledID = nil
                     } else {
                         withAnimation(.easeInOut(duration: 0.15)) {
@@ -59,6 +55,10 @@ struct HistoryView: View {
         }
         .onChange(of: items.count) { _, count in
             selection.count = count
+            // Clamp l'index après suppression pour éviter un accès hors-bornes
+            if selection.selectedIndex >= count {
+                selection.selectedIndex = max(0, count - 1)
+            }
         }
     }
 }

@@ -13,7 +13,8 @@ private struct PinnedItemsView: View {
     @ObservedObject var selection: SelectionModel
     let onPaste: (ClipItem) -> Void
     let onCopy: (ClipItem) -> Void
-    let onUnpin: (ClipItem) -> Void
+    let onTogglePin: (ClipItem) -> Void
+    let onDeleteTrigger: ([ClipItem]) -> Void
 
     @FetchRequest private var items: FetchedResults<ClipItem>
 
@@ -23,13 +24,15 @@ private struct PinnedItemsView: View {
         selection: SelectionModel,
         onPaste: @escaping (ClipItem) -> Void,
         onCopy: @escaping (ClipItem) -> Void,
-        onUnpin: @escaping (ClipItem) -> Void
+        onTogglePin: @escaping (ClipItem) -> Void,
+        onDeleteTrigger: @escaping ([ClipItem]) -> Void
     ) {
         self.persistence = persistence
         self.selection = selection
         self.onPaste = onPaste
         self.onCopy = onCopy
-        self.onUnpin = onUnpin
+        self.onTogglePin = onTogglePin
+        self.onDeleteTrigger = onDeleteTrigger
         _items = FetchRequest(
             sortDescriptors: [NSSortDescriptor(keyPath: \ClipItem.createdAt, ascending: false)],
             predicate: NSPredicate(format: "pinboard == %@", pinboard),
@@ -43,11 +46,17 @@ private struct PinnedItemsView: View {
             selection: selection,
             onPaste: onPaste,
             onCopy: onCopy,
-            onPin: nil,
-            onUnpin: onUnpin
+            onTogglePin: onTogglePin
         )
         .onChange(of: items.count) { _, count in
             selection.count = count
+        }
+        .onChange(of: selection.favoriteTrigger) { _, _ in
+            guard selection.selectedIndex < items.count else { return }
+            onTogglePin(items[selection.selectedIndex])
+        }
+        .onChange(of: selection.deleteTrigger) { _, _ in
+            onDeleteTrigger(Array(items))
         }
     }
 }
@@ -69,10 +78,15 @@ struct ShelfView: View {
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \ClipItem.createdAt, ascending: false)],
-        predicate: NSPredicate(format: "pinboard == nil"),
         animation: .default
     )
     private var historyItems: FetchedResults<ClipItem>
+
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Pinboard.position, ascending: true)],
+        animation: .default
+    )
+    private var pinboards: FetchedResults<Pinboard>
 
     init(
         persistence: PersistenceController,
@@ -93,11 +107,21 @@ struct ShelfView: View {
         VStack(spacing: 0) {
             // Header : onglets + recherche
             VStack(spacing: 0) {
-                TabBarView(activeTab: $activeTab, isCreating: $isCreatingTab)
-                    .environment(\.managedObjectContext, persistence.context)
-                    .onChange(of: activeTab) { _, _ in
+                TabBarView(activeTab: $activeTab, isCreating: $isCreatingTab, onDropItem: { url, pinboard in
+                    handleDrop(uri: url, targetPinboard: pinboard)
+                })
+                .environment(\.managedObjectContext, persistence.context)
+                    .onChange(of: activeTab) { _, tab in
                         searchQuery = ""
                         selection.reset()
+                        // Sync tabIndex ← clic sur onglet
+                        let idx: Int
+                        switch tab {
+                        case .history: idx = 0
+                        case .pinboard(let pb):
+                            idx = (pinboards.firstIndex(of: pb) ?? -1) + 1
+                        }
+                        if selection.tabIndex != idx { selection.tabIndex = idx }
                     }
 
                 HStack(spacing: 12) {
@@ -135,6 +159,21 @@ struct ShelfView: View {
                 selection.count = count
             }
         }
+        // Synchronise tabCount pour la navigation clavier haut/bas
+        .onAppear {
+            selection.tabCount = 1 + pinboards.count
+        }
+        .onChange(of: pinboards.count) { _, count in
+            selection.tabCount = 1 + count
+        }
+        // tabIndex → activeTab (navigation clavier)
+        .onChange(of: selection.tabIndex) { _, idx in
+            let target: ActiveTab = idx == 0
+                ? .history
+                : (idx - 1 < pinboards.count ? .pinboard(pinboards[idx - 1]) : .history)
+            guard activeTab != target else { return }
+            activeTab = target
+        }
         .onKeyPress(.escape) {
             onDismiss()
             return .handled
@@ -164,8 +203,7 @@ struct ShelfView: View {
                 selection: selection,
                 onPaste: onPaste,
                 onCopy: onCopy,
-                onPin: { item in pin(item) },
-                onUnpin: nil
+                onTogglePin: { item in togglePin(item) }
             )
             // .id force SwiftUI à créer une instance fraîche de HistoryView (et donc
             // du ScrollView) à chaque reset → scroll offset 0 garanti, sans état préservé.
@@ -173,6 +211,14 @@ struct ShelfView: View {
             .onChange(of: selection.pasteTrigger) { _, _ in
                 guard selection.selectedIndex < items.count else { return }
                 onPaste(items[selection.selectedIndex])
+            }
+            .onChange(of: selection.favoriteTrigger) { _, _ in
+                guard selection.selectedIndex < items.count else { return }
+                togglePin(items[selection.selectedIndex])
+            }
+            .onChange(of: selection.deleteTrigger) { _, _ in
+                guard selection.selectedIndex < items.count else { return }
+                deleteItem(items[selection.selectedIndex])
             }
 
         case .pinboard(let pb):
@@ -182,23 +228,49 @@ struct ShelfView: View {
                 selection: selection,
                 onPaste: onPaste,
                 onCopy: onCopy,
-                onUnpin: { item in
-                    item.pinboard = nil
-                    do { try persistence.context.save() } catch { print("[Valt] CoreData save failed: \(error)") }
+                onTogglePin: { item in togglePin(item) },
+                onDeleteTrigger: { items in
+                    guard selection.selectedIndex < items.count else { return }
+                    deleteItem(items[selection.selectedIndex])
                 }
             )
         }
     }
 
-    // MARK: - Pin
+    // MARK: - Toggle pin
 
-    private func pin(_ item: ClipItem) {
+    private func togglePin(_ item: ClipItem) {
         let ctx = persistence.context
-        let req = Pinboard.fetchRequest()
-        req.sortDescriptors = [NSSortDescriptor(keyPath: \Pinboard.position, ascending: true)]
-        req.fetchLimit = 1
-        guard let target = (try? ctx.fetch(req))?.first else { return }
-        item.pinboard = target
+        if item.pinboard != nil {
+            item.pinboard = nil
+        } else {
+            let req = Pinboard.fetchRequest()
+            req.sortDescriptors = [NSSortDescriptor(keyPath: \Pinboard.position, ascending: true)]
+            req.fetchLimit = 1
+            guard let target = (try? ctx.fetch(req))?.first else { return }
+            item.pinboard = target
+        }
+        do { try ctx.save() } catch { print("[Valt] CoreData save failed: \(error)") }
+    }
+
+    // MARK: - Delete
+
+    private func deleteItem(_ item: ClipItem) {
+        // Ne pas supprimer le dernier élément — le presse-papier est toujours rempli
+        let req = ClipItem.fetchRequest()
+        guard let total = try? persistence.context.count(for: req), total > 1 else { return }
+        persistence.context.delete(item)
+        do { try persistence.context.save() } catch { print("[Valt] CoreData save failed: \(error)") }
+    }
+
+    // MARK: - Drag & drop
+
+    private func handleDrop(uri: URL, targetPinboard: Pinboard?) {
+        let ctx = persistence.context
+        guard let coordinator = ctx.persistentStoreCoordinator,
+              let objectID = coordinator.managedObjectID(forURIRepresentation: uri),
+              let item = try? ctx.existingObject(with: objectID) as? ClipItem else { return }
+        item.pinboard = targetPinboard
         do { try ctx.save() } catch { print("[Valt] CoreData save failed: \(error)") }
     }
 }

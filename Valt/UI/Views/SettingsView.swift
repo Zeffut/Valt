@@ -1,10 +1,12 @@
 // Valt/UI/Views/SettingsView.swift
 import SwiftUI
 import ApplicationServices
+import ServiceManagement
 
 struct SettingsView: View {
     @AppStorage("valt.maxItems") private var maxItems: Int = 500
     @AppStorage("valt.maxDays") private var maxDays: Int = 0
+    @AppStorage("valt.launchAtLogin") private var launchAtLogin: Bool = false
     @State private var accessibilityGranted: Bool = AXIsProcessTrusted()
 
     private let itemOptions = [50, 100, 200, 500, 1000, 2000]
@@ -58,6 +60,21 @@ struct SettingsView: View {
                     Text("90 jours").tag(90)
                     Text("1 an").tag(365)
                 }
+            }
+
+            Section("Général") {
+                Toggle("Lancer au démarrage", isOn: $launchAtLogin)
+                    .onChange(of: launchAtLogin) { _, enabled in
+                        do {
+                            if enabled {
+                                try SMAppService.mainApp.register()
+                            } else {
+                                try SMAppService.mainApp.unregister()
+                            }
+                        } catch {
+                            print("[Valt] LaunchAtLogin error: \(error)")
+                        }
+                    }
             }
 
             Section("À propos") {

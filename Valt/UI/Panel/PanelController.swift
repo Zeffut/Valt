@@ -68,6 +68,10 @@ final class PanelController {
             switch event.keyCode {
             case 123: self.selection.moveLeft();    return nil  // ← flèche gauche
             case 124: self.selection.moveRight();   return nil  // → flèche droite
+            case 125: self.selection.moveTabDown(); return nil  // ↓ flèche bas → onglet suivant
+            case 126: self.selection.moveTabUp();   return nil  // ↑ flèche haut → onglet précédent
+            case 3:      self.selection.triggerFavorite(); return nil  // F → pin/unpin
+            case 51:     self.selection.triggerDelete();   return nil  // ⌫ → supprimer
             case 36, 76: self.selection.triggerPaste(); return nil  // Return / numpad Enter
             default:  return event
             }

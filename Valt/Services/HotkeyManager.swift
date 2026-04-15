@@ -1,73 +1,63 @@
 // Valt/Services/HotkeyManager.swift
 import AppKit
-import CoreGraphics
+import Carbon
 
-// C-compatible callback — free function pour pouvoir être passée comme pointeur C
-private func eventTapCallback(
-    proxy: CGEventTapProxy,
-    type: CGEventType,
-    event: CGEvent,
-    refcon: UnsafeMutableRawPointer?
-) -> Unmanaged<CGEvent>? {
-    guard type == .keyDown, let refcon else {
-        return Unmanaged.passUnretained(event)
-    }
-
-    let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-    let flags = event.flags
-
-    // ⌘⇧V : keyCode 9, command + shift
-    guard keyCode == 9,
-          flags.contains(.maskCommand),
-          flags.contains(.maskShift) else {
-        return Unmanaged.passUnretained(event)
-    }
-
-    let manager = Unmanaged<HotkeyManager>.fromOpaque(refcon).takeUnretainedValue()
+// C-compatible handler pour les Carbon hotkeys
+private func carbonHotkeyHandler(
+    _ nextHandler: EventHandlerCallRef?,
+    _ event: EventRef?,
+    _ userData: UnsafeMutableRawPointer?
+) -> OSStatus {
+    guard let userData else { return OSStatus(eventNotHandledErr) }
+    let manager = Unmanaged<HotkeyManager>.fromOpaque(userData).takeUnretainedValue()
     DispatchQueue.main.async { manager.onToggle?() }
-
-    return nil // Consomme l'event — ne le transmet pas à l'app active
+    return noErr
 }
 
 @MainActor
 final class HotkeyManager {
     var onToggle: (() -> Void)?
 
-    private var eventTap: CFMachPort?
-    private var runLoopSource: CFRunLoopSource?
+    private var hotKeyRef: EventHotKeyRef?
+    private var eventHandlerRef: EventHandlerRef?
 
     func start() {
-        let mask = CGEventMask(1 << CGEventType.keyDown.rawValue)
+        // ⌘⇧V — keyCode 9 = 'v', modifiers = cmd + shift
+        let hotKeyID = EventHotKeyID(signature: OSType(0x56616C74), id: 1) // 'Valt'
         let selfPtr = Unmanaged.passUnretained(self).toOpaque()
 
-        guard let tap = CGEvent.tapCreate(
-            tap: .cgSessionEventTap,
-            place: .headInsertEventTap,
-            options: .defaultTap,
-            eventsOfInterest: mask,
-            callback: eventTapCallback,
-            userInfo: selfPtr
-        ) else {
-            print("HotkeyManager: CGEventTap failed — vérifier la permission d'accessibilité")
-            return
-        }
+        var eventType = EventTypeSpec(
+            eventClass: OSType(kEventClassKeyboard),
+            eventKind: UInt32(kEventHotKeyPressed)
+        )
 
-        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
-        CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
-        CGEvent.tapEnable(tap: tap, enable: true)
+        InstallEventHandler(
+            GetApplicationEventTarget(),
+            carbonHotkeyHandler,
+            1,
+            &eventType,
+            selfPtr,
+            &eventHandlerRef
+        )
 
-        eventTap = tap
-        runLoopSource = source
+        RegisterEventHotKey(
+            9,                             // keyCode 'v'
+            UInt32(cmdKey | shiftKey),     // ⌘⇧
+            hotKeyID,
+            GetApplicationEventTarget(),
+            0,
+            &hotKeyRef
+        )
     }
 
     func stop() {
-        if let tap = eventTap {
-            CGEvent.tapEnable(tap: tap, enable: false)
+        if let ref = hotKeyRef {
+            UnregisterEventHotKey(ref)
+            hotKeyRef = nil
         }
-        if let source = runLoopSource {
-            CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
+        if let handler = eventHandlerRef {
+            RemoveEventHandler(handler)
+            eventHandlerRef = nil
         }
-        eventTap = nil
-        runLoopSource = nil
     }
 }

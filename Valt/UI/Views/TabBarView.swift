@@ -1,9 +1,11 @@
 // Valt/UI/Views/TabBarView.swift
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct TabBarView: View {
     @Binding var activeTab: ActiveTab
     @Binding var isCreating: Bool
+    var onDropItem: ((URL, Pinboard?) -> Void)?   // nil pinboard = désépingler (drop sur Historique)
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Pinboard.position, ascending: true)],
@@ -19,12 +21,19 @@ struct TabBarView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 2) {
-                // Onglet Historique
+                // Onglet Historique — drop = désépingler
                 tabButton(title: "Historique", isSelected: activeTab == .history) {
                     activeTab = .history
                 }
+                .dropDestination(for: URL.self) { urls, _ in
+                    guard let url = urls.first else { return false }
+                    onDropItem?(url, nil)
+                    return true
+                } isTargeted: { targeted in
+                    if targeted { activeTab = .history }
+                }
 
-                // Onglets pinboards
+                // Onglets pinboards — drop = épingler dans ce pinboard
                 ForEach(pinboards) { pinboard in
                     tabButton(
                         title: pinboard.name,
@@ -36,6 +45,13 @@ struct TabBarView: View {
                         Button("Supprimer ce pinboard", role: .destructive) {
                             deletePinboard(pinboard)
                         }
+                    }
+                    .dropDestination(for: URL.self) { urls, _ in
+                        guard let url = urls.first else { return false }
+                        onDropItem?(url, pinboard)
+                        return true
+                    } isTargeted: { targeted in
+                        if targeted { activeTab = .pinboard(pinboard) }
                     }
                 }
 
@@ -76,12 +92,19 @@ struct TabBarView: View {
 
     private func tabButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
+            // Le texte bold est rendu invisible pour réserver la place maximale,
+            // évitant le layout shift quand on passe de regular à semibold.
             Text(title)
-                .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
+                .font(.system(size: 12, weight: .semibold))
+                .hidden()
+                .overlay(
+                    Text(title)
+                        .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
+                        .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
+                )
                 .padding(.horizontal, 12)
                 .padding(.vertical, 5)
                 .background(isSelected ? Color.accentColor.opacity(0.2) : Color.clear)
-                .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)

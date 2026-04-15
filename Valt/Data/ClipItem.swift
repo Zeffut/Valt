@@ -35,11 +35,10 @@ final class ClipItem: NSManagedObject {
         return item
     }
 
-    /// Renvoie le dernier clip hors pinboard, ou nil
+    /// Renvoie le dernier clip (épinglé ou non) pour la déduplication.
     static func fetchLatest(in context: NSManagedObjectContext) -> ClipItem? {
         let req = fetchRequest()
         req.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
-        req.predicate = NSPredicate(format: "pinboard == nil")
         req.fetchLimit = 1
         return try? context.fetch(req).first
     }

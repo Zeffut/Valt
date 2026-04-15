@@ -41,6 +41,7 @@ enum ClipContent {
     case text(String)
 
     static func detect(item: ClipItem) -> ClipContent {
+        guard !item.isDeleted, item.managedObjectContext != nil else { return .text("") }
         switch item.type {
         case "image": return .image
         case "url":   return .url(item.plainText ?? "")
@@ -164,6 +165,11 @@ struct PreviewView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             if content == nil { content = ClipContent.detect(item: item) }
+        }
+        .onChange(of: item.objectID) { _, _ in
+            // L'item à cet index a changé (ex: suppression) → recalculer
+            guard !item.isDeleted, item.managedObjectContext != nil else { return }
+            content = ClipContent.detect(item: item)
         }
     }
 }
