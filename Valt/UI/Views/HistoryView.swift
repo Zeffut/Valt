@@ -9,8 +9,6 @@ struct HistoryView: View {
     let onPin: ((ClipItem) -> Void)?
     let onUnpin: ((ClipItem) -> Void)?
 
-    @State private var scrollProxy: ScrollViewProxy? = nil
-
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if items.isEmpty {
@@ -21,6 +19,10 @@ struct HistoryView: View {
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
+                // .id(resetToken) sur le ScrollViewReader entier : quand le token change
+                // (changement d'onglet, recherche), SwiftUI recrée tout le bloc desde zéro.
+                // Le nouveau ScrollView démarre naturellement à offset 0 et contentMargins
+                // garantit que le padding 16px est visible dès le premier rendu.
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 12) {
@@ -36,20 +38,16 @@ struct HistoryView: View {
                                 .id(index)
                             }
                         }
-                        .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                     }
-                    // .id force SwiftUI à recréer le ScrollView complet quand resetToken
-                    // change → scroll offset revient à 0 naturellement → padding visible.
-                    // C'est plus fiable que scrollTo() dont le comportement dépend du layout.
-                    .id(selection.resetToken)
-                    .onAppear { scrollProxy = proxy }
+                    .contentMargins(.horizontal, 16, for: .scrollContent)
                     .onChange(of: selection.selectedIndex) { _, newIndex in
                         withAnimation(.easeInOut(duration: 0.15)) {
                             proxy.scrollTo(newIndex, anchor: .center)
                         }
                     }
                 }
+                .id(selection.resetToken)
             }
         }
         .onAppear {
@@ -57,9 +55,6 @@ struct HistoryView: View {
         }
         .onChange(of: items.count) { old, count in
             selection.count = count
-            if count > old {
-                scrollProxy?.scrollTo(0, anchor: .center)
-            }
         }
     }
 }
