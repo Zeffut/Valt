@@ -65,6 +65,7 @@ struct ShelfView: View {
     @State private var searchService: SearchService
     @State private var activeTab: ActiveTab = .history
     @State private var isCreatingTab = false
+    @State private var mouseMonitor: Any?
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \ClipItem.createdAt, ascending: false)],
@@ -128,13 +129,6 @@ struct ShelfView: View {
 
             contentView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .overlay {
-                    if isCreatingTab {
-                        Color.clear
-                            .contentShape(Rectangle())
-                            .onTapGesture { isCreatingTab = false }
-                    }
-                }
         }
         .onChange(of: historyItems.count) { _, count in
             if case .history = activeTab, searchQuery.isEmpty {
@@ -144,6 +138,17 @@ struct ShelfView: View {
         .onKeyPress(.escape) {
             onDismiss()
             return .handled
+        }
+        .onChange(of: isCreatingTab) { _, creating in
+            if creating {
+                mouseMonitor = NSEvent.addLocalMonitorForEvents(matching: .leftMouseDown) { event in
+                    // Laisse l'événement passer normalement, annule juste la création
+                    isCreatingTab = false
+                    return event
+                }
+            } else {
+                if let m = mouseMonitor { NSEvent.removeMonitor(m); mouseMonitor = nil }
+            }
         }
     }
 
