@@ -43,8 +43,13 @@ struct HistoryView: View {
                 .contentMargins(.horizontal, 16, for: .scrollContent)
                 .scrollPosition(id: $scrolledID, anchor: .center)
                 .onChange(of: selection.selectedIndex) { _, newIndex in
-                    withAnimation(.easeInOut(duration: 0.15)) {
-                        scrolledID = newIndex
+                    if newIndex == 0 {
+                        // nil = pas de cible → offset 0 naturel, contentMargins visible
+                        scrolledID = nil
+                    } else {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            scrolledID = newIndex
+                        }
                     }
                 }
             }
