@@ -24,7 +24,7 @@ struct HistoryView: View {
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 12) {
-                            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                            ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                                 ClipCellView(
                                     item: item,
                                     isSelected: selection.selectedIndex == index,

@@ -2,6 +2,58 @@
 import SwiftUI
 import CoreData
 
+// MARK: - PinnedItemsView
+
+/// Sous-vue dédiée aux items d'un pinboard.
+/// Crée son propre @FetchRequest avec le prédicat fixé à l'init,
+/// ce qui garantit que les données sont correctes dès le premier rendu
+/// (contrairement à nsPredicate mis à jour dans onChange, qui s'exécute après).
+private struct PinnedItemsView: View {
+    let persistence: PersistenceController
+    @ObservedObject var selection: SelectionModel
+    let onPaste: (ClipItem) -> Void
+    let onCopy: (ClipItem) -> Void
+    let onUnpin: (ClipItem) -> Void
+
+    @FetchRequest private var items: FetchedResults<ClipItem>
+
+    init(
+        pinboard: Pinboard,
+        persistence: PersistenceController,
+        selection: SelectionModel,
+        onPaste: @escaping (ClipItem) -> Void,
+        onCopy: @escaping (ClipItem) -> Void,
+        onUnpin: @escaping (ClipItem) -> Void
+    ) {
+        self.persistence = persistence
+        self.selection = selection
+        self.onPaste = onPaste
+        self.onCopy = onCopy
+        self.onUnpin = onUnpin
+        _items = FetchRequest(
+            sortDescriptors: [NSSortDescriptor(keyPath: \ClipItem.createdAt, ascending: false)],
+            predicate: NSPredicate(format: "pinboard == %@", pinboard),
+            animation: .default
+        )
+    }
+
+    var body: some View {
+        HistoryView(
+            items: Array(items),
+            selection: selection,
+            onPaste: onPaste,
+            onCopy: onCopy,
+            onPin: nil,
+            onUnpin: onUnpin
+        )
+        .onChange(of: items.count) { _, count in
+            selection.count = count
+        }
+    }
+}
+
+// MARK: - ShelfView
+
 struct ShelfView: View {
     let persistence: PersistenceController
     @ObservedObject var selection: SelectionModel
@@ -20,14 +72,6 @@ struct ShelfView: View {
     )
     private var historyItems: FetchedResults<ClipItem>
 
-    // Prédicat mis à jour dynamiquement quand on change d'onglet pinboard
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \ClipItem.createdAt, ascending: false)],
-        predicate: NSPredicate(value: false),
-        animation: .default
-    )
-    private var pinnedItems: FetchedResults<ClipItem>
-
     init(
         persistence: PersistenceController,
         selection: SelectionModel,
@@ -43,28 +87,13 @@ struct ShelfView: View {
         _searchService = State(initialValue: SearchService(context: persistence.context))
     }
 
-    private var displayedItems: [ClipItem] {
-        guard searchQuery.isEmpty else { return searchService.results }
-        switch activeTab {
-        case .history:
-            return Array(historyItems)
-        case .pinboard:
-            return Array(pinnedItems)
-        }
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             // Header : onglets + recherche
             VStack(spacing: 0) {
                 TabBarView(activeTab: $activeTab)
                     .environment(\.managedObjectContext, persistence.context)
-                    .onChange(of: activeTab) { _, newTab in
-                        if case .pinboard(let pb) = newTab {
-                            pinnedItems.nsPredicate = NSPredicate(format: "pinboard == %@", pb)
-                        } else {
-                            pinnedItems.nsPredicate = NSPredicate(value: false)
-                        }
+                    .onChange(of: activeTab) { _, _ in
                         searchQuery = ""
                         selection.reset()
                     }
@@ -96,24 +125,13 @@ struct ShelfView: View {
 
             Divider()
 
-            HistoryView(
-                items: displayedItems,
-                selection: selection,
-                onPaste: onPaste,
-                onCopy: onCopy,
-                onPin: pinHandler,
-                onUnpin: unpinHandler
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            contentView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .onChange(of: historyItems.count) { _, count in
             if case .history = activeTab, searchQuery.isEmpty {
                 selection.count = count
             }
-        }
-        .onChange(of: selection.pasteTrigger) { _, _ in
-            guard selection.selectedIndex < displayedItems.count else { return }
-            onPaste(displayedItems[selection.selectedIndex])
         }
         .onKeyPress(.escape) {
             onDismiss()
@@ -121,22 +139,42 @@ struct ShelfView: View {
         }
     }
 
-    // MARK: - Pin
+    // MARK: - Content routing
 
-    /// nil quand on est sur un onglet pinboard (le bouton est masqué)
-    private var pinHandler: ((ClipItem) -> Void)? {
-        guard case .history = activeTab else { return nil }
-        return { item in pin(item) }
-    }
+    @ViewBuilder
+    private var contentView: some View {
+        switch activeTab {
+        case .history:
+            let items = searchQuery.isEmpty ? Array(historyItems) : searchService.results
+            HistoryView(
+                items: items,
+                selection: selection,
+                onPaste: onPaste,
+                onCopy: onCopy,
+                onPin: { item in pin(item) },
+                onUnpin: nil
+            )
+            .onChange(of: selection.pasteTrigger) { _, _ in
+                guard selection.selectedIndex < items.count else { return }
+                onPaste(items[selection.selectedIndex])
+            }
 
-    /// nil quand on est sur l'historique (pas d'item épinglé)
-    private var unpinHandler: ((ClipItem) -> Void)? {
-        guard case .pinboard = activeTab else { return nil }
-        return { item in
-            item.pinboard = nil
-            do { try persistence.context.save() } catch { print("[Valt] CoreData save failed: \(error)") }
+        case .pinboard(let pb):
+            PinnedItemsView(
+                pinboard: pb,
+                persistence: persistence,
+                selection: selection,
+                onPaste: onPaste,
+                onCopy: onCopy,
+                onUnpin: { item in
+                    item.pinboard = nil
+                    do { try persistence.context.save() } catch { print("[Valt] CoreData save failed: \(error)") }
+                }
+            )
         }
     }
+
+    // MARK: - Pin
 
     private func pin(_ item: ClipItem) {
         let ctx = persistence.context
