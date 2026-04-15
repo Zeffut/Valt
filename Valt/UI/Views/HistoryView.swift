@@ -36,9 +36,9 @@ struct HistoryView: View {
                                 .id(index)
                             }
                         }
-                        .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                     }
+                    .contentMargins(.horizontal, 16, for: .scrollContent)
                     .onAppear { scrollProxy = proxy }
                     .onChange(of: selection.selectedIndex) { _, newIndex in
                         withAnimation(.easeInOut(duration: 0.15)) {
