@@ -88,7 +88,8 @@ struct ShelfView: View {
                 selection: selection,
                 onPaste: onPaste,
                 onCopy: onCopy,
-                onPin: pinHandler
+                onPin: pinHandler,
+                onUnpin: unpinHandler
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -108,6 +109,15 @@ struct ShelfView: View {
     private var pinHandler: ((ClipItem) -> Void)? {
         guard case .history = activeTab else { return nil }
         return { item in pin(item) }
+    }
+
+    /// nil quand on est sur l'historique (pas d'item épinglé)
+    private var unpinHandler: ((ClipItem) -> Void)? {
+        guard case .pinboard = activeTab else { return nil }
+        return { item in
+            item.pinboard = nil
+            do { try persistence.context.save() } catch { print("[Valt] CoreData save failed: \(error)") }
+        }
     }
 
     private func pin(_ item: ClipItem) {

@@ -8,6 +8,7 @@ struct ClipCellView: View {
     let onPaste: () -> Void
     let onCopy: () -> Void
     let onPin: (() -> Void)?
+    let onUnpin: (() -> Void)?
 
     @State private var isHovered = false
 
@@ -69,6 +70,10 @@ struct ClipCellView: View {
         .contextMenu {
             Button("Coller") { onPaste() }
             Button("Copier") { onCopy() }
+            if let onUnpin {
+                Divider()
+                Button("Retirer du pinboard") { onUnpin() }
+            }
         }
     }
 

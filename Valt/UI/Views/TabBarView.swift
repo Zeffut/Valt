@@ -67,11 +67,11 @@ struct TabBarView: View {
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
-                .focusable(false)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 6)
         }
+        .focusEffectDisabled()
     }
 
     private func tabButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
