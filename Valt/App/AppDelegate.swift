@@ -29,7 +29,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.panelController.toggle()
         }
 
-        requestAccessibility()
         hotkeyManager.start()
         monitor.start()
         buildStatusBar()
@@ -114,10 +113,4 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func quit() { NSApp.terminate(nil) }
 
-    private func requestAccessibility() {
-        guard !AXIsProcessTrusted() else { return }
-        let key = "AXTrustedCheckOptionPrompt" as CFString
-        let options = [key: true] as CFDictionary
-        _ = AXIsProcessTrustedWithOptions(options)
-    }
 }
