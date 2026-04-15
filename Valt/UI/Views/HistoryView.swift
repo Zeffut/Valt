@@ -47,7 +47,6 @@ struct HistoryView: View {
                         }
                     }
                 }
-                .id(selection.resetToken)
             }
         }
         .onAppear {

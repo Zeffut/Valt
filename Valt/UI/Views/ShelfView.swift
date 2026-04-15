@@ -154,6 +154,9 @@ struct ShelfView: View {
                 onPin: { item in pin(item) },
                 onUnpin: nil
             )
+            // .id force SwiftUI à créer une instance fraîche de HistoryView (et donc
+            // du ScrollView) à chaque reset → scroll offset 0 garanti, sans état préservé.
+            .id(selection.resetToken)
             .onChange(of: selection.pasteTrigger) { _, _ in
                 guard selection.selectedIndex < items.count else { return }
                 onPaste(items[selection.selectedIndex])
