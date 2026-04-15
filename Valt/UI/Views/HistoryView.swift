@@ -23,36 +23,30 @@ struct HistoryView: View {
             } else {
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 0) {
-                            // Ancre à x=0 dans le contenu du scroll, AVANT le padding du LazyHStack.
-                            // scrollTo("start", .leading) → scroll offset 0 → padding visible.
-                            Color.clear.frame(width: 0, height: 1).id("start")
-                            LazyHStack(spacing: 12) {
-                                ForEach(Array(items.enumerated()), id: \.offset) { index, item in
-                                    ClipCellView(
-                                        item: item,
-                                        isSelected: selection.selectedIndex == index,
-                                        onPaste: { onPaste(item) },
-                                        onCopy: { onCopy(item) },
-                                        onPin: onPin.map { pin in { pin(item) } },
-                                        onUnpin: onUnpin.map { unpin in { unpin(item) } }
-                                    )
-                                    .id(index)
-                                }
+                        LazyHStack(spacing: 12) {
+                            ForEach(Array(items.enumerated()), id: \.offset) { index, item in
+                                ClipCellView(
+                                    item: item,
+                                    isSelected: selection.selectedIndex == index,
+                                    onPaste: { onPaste(item) },
+                                    onCopy: { onCopy(item) },
+                                    onPin: onPin.map { pin in { pin(item) } },
+                                    onUnpin: onUnpin.map { unpin in { unpin(item) } }
+                                )
+                                .id(index)
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
                     }
+                    // .id force SwiftUI à recréer le ScrollView complet quand resetToken
+                    // change → scroll offset revient à 0 naturellement → padding visible.
+                    // C'est plus fiable que scrollTo() dont le comportement dépend du layout.
+                    .id(selection.resetToken)
                     .onAppear { scrollProxy = proxy }
                     .onChange(of: selection.selectedIndex) { _, newIndex in
                         withAnimation(.easeInOut(duration: 0.15)) {
                             proxy.scrollTo(newIndex, anchor: .center)
-                        }
-                    }
-                    .onChange(of: selection.resetToken) { _, _ in
-                        DispatchQueue.main.async {
-                            proxy.scrollTo("start", anchor: .leading)
                         }
                     }
                 }
@@ -63,9 +57,8 @@ struct HistoryView: View {
         }
         .onChange(of: items.count) { old, count in
             selection.count = count
-            // Nouvel item capturé → scroll automatique vers le plus récent
             if count > old {
-                scrollProxy?.scrollTo("start", anchor: .leading)
+                scrollProxy?.scrollTo(0, anchor: .center)
             }
         }
     }
