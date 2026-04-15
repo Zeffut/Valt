@@ -20,6 +20,14 @@ struct ShelfView: View {
     )
     private var historyItems: FetchedResults<ClipItem>
 
+    // Prédicat mis à jour dynamiquement quand on change d'onglet pinboard
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \ClipItem.createdAt, ascending: false)],
+        predicate: NSPredicate(value: false),
+        animation: .default
+    )
+    private var pinnedItems: FetchedResults<ClipItem>
+
     init(
         persistence: PersistenceController,
         selection: SelectionModel,
@@ -40,8 +48,8 @@ struct ShelfView: View {
         switch activeTab {
         case .history:
             return Array(historyItems)
-        case .pinboard(let pinboard):
-            return pinboard.sortedItems
+        case .pinboard:
+            return Array(pinnedItems)
         }
     }
 
@@ -51,7 +59,12 @@ struct ShelfView: View {
             VStack(spacing: 0) {
                 TabBarView(activeTab: $activeTab)
                     .environment(\.managedObjectContext, persistence.context)
-                    .onChange(of: activeTab) { _, _ in
+                    .onChange(of: activeTab) { _, newTab in
+                        if case .pinboard(let pb) = newTab {
+                            pinnedItems.nsPredicate = NSPredicate(format: "pinboard == %@", pb)
+                        } else {
+                            pinnedItems.nsPredicate = NSPredicate(value: false)
+                        }
                         searchQuery = ""
                         selection.reset()
                     }
