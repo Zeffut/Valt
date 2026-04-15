@@ -1,17 +1,45 @@
 // Valt/UI/Views/SettingsView.swift
 import SwiftUI
+import ApplicationServices
 
 struct SettingsView: View {
     @AppStorage("valt.maxItems") private var maxItems: Int = 500
     @AppStorage("valt.maxDays") private var maxDays: Int = 0
+    @State private var accessibilityGranted: Bool = AXIsProcessTrusted()
 
     private let itemOptions = [50, 100, 200, 500, 1000, 2000]
-    private let dayOptions  = [0, 7, 14, 30, 90, 365]
 
     var body: some View {
         Form {
             Section("Raccourci") {
                 LabeledContent("Ouvrir Valt", value: "⌘⇧V")
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("Accessibilité") {
+                LabeledContent("Statut") {
+                    if accessibilityGranted {
+                        Label("Autorisé", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    } else {
+                        Label("Non autorisé", systemImage: "xmark.circle.fill")
+                            .foregroundStyle(.red)
+                    }
+                }
+
+                if !accessibilityGranted {
+                    Button("Autoriser l'accès…") {
+                        requestAndRefresh()
+                    }
+                } else {
+                    Button("Rouvrir le panneau d'accessibilité") {
+                        requestAndRefresh()
+                    }
+                    .foregroundStyle(.secondary)
+                }
+
+                Text("Requis pour intercepter ⌘⇧V. À réaccorder après chaque mise à jour.")
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
@@ -37,7 +65,21 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 380, height: 280)
+        .frame(width: 420, height: 400)
         .navigationTitle("Préférences")
+        .onReceive(
+            NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)
+        ) { _ in
+            // Rafraîchit le statut quand l'utilisateur revient des Préférences Système
+            accessibilityGranted = AXIsProcessTrusted()
+        }
+    }
+
+    private func requestAndRefresh() {
+        // Ouvre le panneau Accessibilité des Préférences Système avec Valt déjà listé
+        let key = "AXTrustedCheckOptionPrompt" as CFString
+        let options = [key: true] as CFDictionary
+        _ = AXIsProcessTrustedWithOptions(options)
+        // Le statut sera mis à jour via didBecomeActiveNotification quand l'user revient
     }
 }

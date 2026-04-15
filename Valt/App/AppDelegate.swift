@@ -29,10 +29,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.panelController.toggle()
         }
 
+        requestAccessibility()
         hotkeyManager.start()
         monitor.start()
         buildStatusBar()
-        requestAccessibility()
         // Vérification silencieuse au lancement (max 1 fois/jour)
         UpdateChecker.shared.checkOnLaunch()
     }
@@ -115,7 +115,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func quit() { NSApp.terminate(nil) }
 
     private func requestAccessibility() {
-        let options = [kAXTrustedCheckOptionPrompt.takeRetainedValue() as String: true] as CFDictionary
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         _ = AXIsProcessTrustedWithOptions(options)
     }
 }
