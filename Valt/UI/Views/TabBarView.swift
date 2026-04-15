@@ -52,6 +52,9 @@ struct TabBarView: View {
                         .focused($fieldFocused)
                         .onSubmit { confirmCreation() }
                         .onKeyPress(.escape) { cancelCreation(); return .handled }
+                        .onChange(of: fieldFocused) { _, focused in
+                            if !focused { cancelCreation() }
+                        }
                 }
 
                 // Bouton +
